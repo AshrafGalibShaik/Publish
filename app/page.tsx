@@ -10,43 +10,37 @@ export default function HomePage() {
   const { user, loading, signOut } = useAuth();
 
   return (
-    <div className="min-h-screen bg-white text-foreground">
+    <div className="min-h-screen bg-white text-foreground animate-fade-in">
       {/* ── Header ── */}
-      <header className="border-b border-border bg-white sticky top-0 z-50">
+      <header className="border-b border-border bg-white sticky top-0 z-50 transition-all duration-200">
         <div className="max-w-5xl mx-auto px-5 sm:px-8 h-14 flex items-center justify-between">
-          <Link href="/" className="font-serif text-xl tracking-tight text-foreground flex items-center gap-2">
+          <Link href="/" className="font-serif text-xl tracking-tight text-foreground flex items-center gap-2 group">
             <span className="font-bold">PUBLISH</span>
-            <span className="text-xs uppercase tracking-[0.25em] text-muted-foreground border-l border-border pl-2 font-sans font-medium">Enterprise</span>
+            <span className="text-xs uppercase tracking-[0.25em] text-muted-foreground border-l border-border pl-2 font-sans font-medium transition-all group-hover:text-foreground">Enterprise</span>
           </Link>
           <nav className="flex items-center gap-2">
-            <Link href="/publications">
-              <Button variant="ghost" size="sm" className="text-xs font-medium uppercase tracking-wider text-muted-foreground hover:text-foreground">
-                Registry
-              </Button>
+            <Link href="/publications" className="nav-link-underline mx-2">
+              <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors py-1">Registry</span>
             </Link>
 
             {loading ? (
               <Loader2 className="h-4 w-4 animate-spin text-muted-foreground mx-3" />
             ) : user ? (
               <>
-                <Link href="/dashboard">
-                  <Button variant="ghost" size="sm" className="text-xs font-medium uppercase tracking-wider text-muted-foreground hover:text-foreground">
-                    Dashboard
-                  </Button>
+                <Link href="/dashboard" className="nav-link-underline mx-2">
+                  <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors py-1">Dashboard</span>
                 </Link>
-                <Button variant="ghost" size="sm" onClick={signOut} className="text-xs font-medium uppercase tracking-wider text-muted-foreground hover:text-foreground">
+                <Button variant="ghost" size="sm" onClick={signOut} className="text-xs font-medium uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors">
                   Sign Out
                 </Button>
               </>
             ) : (
               <>
-                <Link href="/login">
-                  <Button variant="ghost" size="sm" className="text-xs font-medium uppercase tracking-wider text-muted-foreground hover:text-foreground">
-                    Sign In
-                  </Button>
+                <Link href="/login" className="nav-link-underline mx-2">
+                  <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors py-1">Sign In</span>
                 </Link>
                 <Link href="/signup">
-                  <Button size="sm" className="text-xs uppercase tracking-wider h-8">
+                  <Button size="sm" className="text-xs uppercase tracking-wider h-8 transition-transform hover:scale-105 active:scale-95 duration-200">
                     Get Started
                   </Button>
                 </Link>
@@ -72,20 +66,20 @@ export default function HomePage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-3 pt-2">
               <Link href="/dashboard">
-                <Button size="lg" className="w-full sm:w-auto h-11 px-7 text-xs uppercase tracking-wider">
+                <Button size="lg" className="w-full sm:w-auto h-11 px-7 text-xs uppercase tracking-wider transition-all duration-200 hover:shadow-lg hover:translate-y-[-1px]">
                   Open Console <ArrowRight className="ml-2 h-3.5 w-3.5" />
                 </Button>
               </Link>
               <Link href="/publications">
-                <Button size="lg" variant="outline" className="w-full sm:w-auto h-11 px-7 text-xs uppercase tracking-wider border-border text-foreground hover:bg-secondary">
+                <Button size="lg" variant="outline" className="w-full sm:w-auto h-11 px-7 text-xs uppercase tracking-wider border-border text-foreground hover:bg-secondary transition-all duration-200 hover:translate-y-[-1px]">
                   Explore Ledger
                 </Button>
               </Link>
             </div>
           </div>
 
-          <div className="lg:col-span-6">
-            <div className="border border-border p-3 rounded-lg bg-secondary/10">
+          <div className="lg:col-span-6 animate-float">
+            <div className="border border-border p-3 rounded-lg bg-secondary/10 hover-premium-card">
               <div className="relative aspect-[4/3] w-full overflow-hidden rounded border border-border bg-white">
                 <Image
                   src="/corporate_hero.png"
@@ -121,7 +115,7 @@ export default function HomePage() {
       <section className="max-w-5xl mx-auto px-5 sm:px-8 py-20 sm:py-28">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
           <div className="lg:col-span-6 order-last lg:order-first">
-            <div className="border border-border p-3 rounded-lg bg-secondary/10">
+            <div className="border border-border p-3 rounded-lg bg-secondary/10 hover-premium-card">
               <div className="relative aspect-[4/3] w-full overflow-hidden rounded border border-border bg-white">
                 <Image
                   src="/corporate_features.png"
@@ -155,7 +149,7 @@ export default function HomePage() {
                 "Built-in RLS Security Policies via PostgreSQL",
                 "Groq qwen-2.5-32b Intelligent Drafting Co-pilot"
               ].map((text) => (
-                <div key={text} className="flex items-center gap-2">
+                <div key={text} className="flex items-center gap-2 transition-transform hover:translate-x-1 duration-200">
                   <CheckCircle className="h-4 w-4 text-foreground" strokeWidth={2} />
                   <span>{text}</span>
                 </div>
@@ -184,8 +178,8 @@ export default function HomePage() {
               { icon: Shield, title: "Row-Level RLS Boundaries", desc: "PostgreSQL row-level isolation policies guarantee absolute data boundaries for all tenant channels." },
               { icon: Zap, title: "High-Frequency Indexing", desc: "Published nodes are vectorized and immediately integrated into the global catalog in real-time." },
             ].map(({ icon: Icon, title, desc }) => (
-              <div key={title} className="bg-white p-6 sm:p-8 space-y-3">
-                <div className="w-8 h-8 rounded bg-secondary flex items-center justify-center">
+              <div key={title} className="bg-white p-6 sm:p-8 space-y-3 hover-premium-card cursor-default">
+                <div className="w-8 h-8 rounded bg-secondary flex items-center justify-center transition-transform duration-300 hover:rotate-12">
                   <Icon className="h-4 w-4 text-foreground" strokeWidth={1.5} />
                 </div>
                 <h3 className="font-medium text-foreground text-sm">{title}</h3>
@@ -198,7 +192,7 @@ export default function HomePage() {
 
       {/* ── Verification Banner ── */}
       <section className="border-t border-border">
-        <div className="max-w-5xl mx-auto px-5 sm:px-8 py-20 sm:py-24 text-center space-y-6">
+        <div className="max-w-5xl mx-auto px-5 sm:px-8 py-20 sm:py-24 text-center space-y-6 animate-fade-in">
           <Globe className="h-8 w-8 text-foreground mx-auto" strokeWidth={1.5} />
           <h2 className="font-serif text-3xl text-foreground font-light">
             Verify any publication in real-time.
@@ -207,7 +201,7 @@ export default function HomePage() {
             Our public ledgers are publicly auditable. Search the entire decentralized corporate catalog with comprehensive authorship trace elements.
           </p>
           <Link href="/publications">
-            <Button size="lg" className="h-11 px-8 text-xs uppercase tracking-wider">
+            <Button size="lg" className="h-11 px-8 text-xs uppercase tracking-wider transition-all duration-200 hover:shadow-lg hover:translate-y-[-1px]">
               Verify Publications Ledger
             </Button>
           </Link>
