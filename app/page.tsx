@@ -2,10 +2,13 @@
 
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { ArrowRight, FileText, GitBranch, Search, Sparkles, Shield, Zap, Globe, Cpu, CheckCircle } from "lucide-react";
+import { ArrowRight, FileText, GitBranch, Search, Sparkles, Shield, Zap, Globe, CheckCircle, Loader2 } from "lucide-react";
 import Image from "next/image";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function HomePage() {
+  const { user, loading, signOut } = useAuth();
+
   return (
     <div className="min-h-screen bg-white text-foreground">
       {/* ── Header ── */}
@@ -21,16 +24,34 @@ export default function HomePage() {
                 Registry
               </Button>
             </Link>
-            <Link href="/login">
-              <Button variant="ghost" size="sm" className="text-xs font-medium uppercase tracking-wider text-muted-foreground hover:text-foreground">
-                Sign In
-              </Button>
-            </Link>
-            <Link href="/signup">
-              <Button size="sm" className="text-xs uppercase tracking-wider h-8">
-                Get Started
-              </Button>
-            </Link>
+
+            {loading ? (
+              <Loader2 className="h-4 w-4 animate-spin text-muted-foreground mx-3" />
+            ) : user ? (
+              <>
+                <Link href="/dashboard">
+                  <Button variant="ghost" size="sm" className="text-xs font-medium uppercase tracking-wider text-muted-foreground hover:text-foreground">
+                    Dashboard
+                  </Button>
+                </Link>
+                <Button variant="ghost" size="sm" onClick={signOut} className="text-xs font-medium uppercase tracking-wider text-muted-foreground hover:text-foreground">
+                  Sign Out
+                </Button>
+              </>
+            ) : (
+              <>
+                <Link href="/login">
+                  <Button variant="ghost" size="sm" className="text-xs font-medium uppercase tracking-wider text-muted-foreground hover:text-foreground">
+                    Sign In
+                  </Button>
+                </Link>
+                <Link href="/signup">
+                  <Button size="sm" className="text-xs uppercase tracking-wider h-8">
+                    Get Started
+                  </Button>
+                </Link>
+              </>
+            )}
           </nav>
         </div>
       </header>
