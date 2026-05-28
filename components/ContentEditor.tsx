@@ -21,7 +21,12 @@ import {
   FileText, 
   ListPlus, 
   Check, 
-  Copy 
+  Copy,
+  Terminal,
+  Activity,
+  Cpu,
+  Database,
+  ArrowUpRight
 } from "lucide-react";
 
 // Fallback user ID for development (no auth)
@@ -143,21 +148,25 @@ export function ContentEditor({
 
   const handlePublish = async () => {
     if (!title) {
-      toast.error("Please enter a title before publishing");
+      toast.error("Please enter a title");
+      return;
+    }
+
+    const contentHtml = editor?.getHTML() || "";
+    const contentText = editor?.getText() || "";
+
+    if (!contentText.trim()) {
+      toast.error("Please add some content before publishing");
       return;
     }
 
     setPublishing(true);
     try {
-      const contentHtml = editor?.getHTML() || "";
-      const contentText = editor?.getText() || "";
-      const slug = title.toLowerCase().replace(/\s+/g, "-");
-
       const activeUserId = user?.id || DEV_USER_ID;
       const publishData = {
         user_id: activeUserId,
         title,
-        slug: `${slug}-${Date.now()}`,
+        slug: `${title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")}-${Date.now()}`,
         description,
         content_html: contentHtml,
         content_text: contentText,
@@ -307,183 +316,219 @@ export function ContentEditor({
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 relative z-10">
       {/* Editor & Input Fields */}
-      <div className="lg:col-span-2 space-y-4">
-        <Card className="p-6">
-          <div className="space-y-4">
+      <div className="lg:col-span-2 space-y-6">
+        <Card className="p-6 bg-white/[0.01] border-border rounded Palantir-shadow relative overflow-hidden">
+          <div className="absolute inset-0 cyber-grid pointer-events-none opacity-[0.01]" />
+          
+          <div className="space-y-5">
             <div>
-              <label className="text-sm font-medium">Title</label>
+              <label className="text-xs font-mono font-bold tracking-wider text-muted-foreground uppercase">
+                DOCUMENT TITLE
+              </label>
               <Input
-                placeholder="Enter article title"
+                placeholder="Initialize document title..."
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="mt-1"
+                className="mt-2 bg-background border-border text-white placeholder:text-muted-foreground focus:border-primary/40 focus:ring-primary/20 h-10 uppercase tracking-wide"
               />
             </div>
 
             <div>
               <div className="flex justify-between items-center">
-                <label className="text-sm font-medium">Description</label>
+                <label className="text-xs font-mono font-bold tracking-wider text-muted-foreground uppercase">
+                  DOCUMENT SUMMARY / DESCRIPTION
+                </label>
                 <button
                   type="button"
                   onClick={() => callGroqAI("description")}
-                  className="text-xs text-blue-600 hover:text-blue-700 flex items-center gap-1 font-medium"
+                  className="text-[10px] font-mono text-primary hover:text-primary-foreground border border-primary/30 hover:border-primary rounded px-2 py-0.5 bg-primary/5 flex items-center gap-1.5 transition-all duration-300"
                 >
-                  <Sparkles className="h-3 w-3" /> Auto-generate
+                  <Sparkles className="h-3 w-3" /> COGNITIVE COMPASS
                 </button>
               </div>
               <Textarea
-                placeholder="Brief description of your content (or click auto-generate)"
+                placeholder="Outline a brief summary or trigger auto-generator..."
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 rows={2}
-                className="mt-1"
+                className="mt-2 bg-background border-border text-white placeholder:text-muted-foreground focus:border-primary/40 focus:ring-primary/20 text-xs sm:text-sm leading-relaxed"
               />
             </div>
 
             <div>
               <div className="flex justify-between items-center">
-                <label className="text-sm font-medium">Topic / Keywords</label>
+                <label className="text-xs font-mono font-bold tracking-wider text-muted-foreground uppercase">
+                  TOPICS & CATEGORIZATION KEYWORDS
+                </label>
                 <button
                   type="button"
                   onClick={() => callGroqAI("tags")}
-                  className="text-xs text-blue-600 hover:text-blue-700 flex items-center gap-1 font-medium"
+                  className="text-[10px] font-mono text-primary hover:text-primary-foreground border border-primary/30 hover:border-primary rounded px-2 py-0.5 bg-primary/5 flex items-center gap-1.5 transition-all duration-300"
                 >
-                  <Sparkles className="h-3 w-3" /> Auto-generate
+                  <Sparkles className="h-3 w-3" /> CATEGORIZE AI
                 </button>
               </div>
               <Input
-                placeholder="e.g., Technology, AI, Cloud Computing"
+                placeholder="e.g. Technology, Vector Databases, Cloud-Native Systems"
                 value={topic}
                 onChange={(e) => setTopic(e.target.value)}
-                className="mt-1"
+                className="mt-2 bg-background border-border text-white placeholder:text-muted-foreground focus:border-primary/40 focus:ring-primary/20 h-10"
               />
             </div>
           </div>
         </Card>
 
-        <Card className="p-6">
-          <div className="mb-4 flex items-center justify-between rounded-lg border border-gray-200 bg-gray-50 p-3">
+        {/* Rich-Text Workspace Pane */}
+        <Card className="p-6 bg-white/[0.01] border-border rounded Palantir-shadow relative overflow-hidden flex flex-col gap-4">
+          <div className="absolute inset-0 cyber-grid pointer-events-none opacity-[0.01]" />
+          
+          <div className="flex items-center justify-between font-mono text-[10px] text-muted-foreground uppercase border-b border-border/40 pb-3">
             <div className="flex items-center gap-2">
-              <AlertCircle className="h-4 w-4 text-gray-600" />
-              <p className="text-sm text-gray-600">Auto-saving every 10 seconds</p>
+              <Terminal className="h-3.5 w-3.5 text-primary" />
+              <span>/dev/workspace/tiptap-node</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span>AUTOSAVE ACTIVE (10S POLLING)</span>
             </div>
           </div>
 
-          <div className="prose prose-sm max-w-none border rounded-lg border-gray-200 min-h-96 p-4 bg-white">
-            <EditorContent editor={editor} />
+          <div className="border border-border rounded bg-background p-4 min-h-[380px] focus-within:border-primary/30 transition-colors duration-300">
+            <EditorContent editor={editor} className="text-white placeholder:text-muted-foreground prose prose-invert max-w-none" />
           </div>
         </Card>
 
-        <div className="flex gap-3">
+        {/* Action Controls */}
+        <div className="flex gap-4 font-mono">
           <Button
             onClick={() => saveDraft(true)}
             disabled={saving || !title}
             variant="outline"
-            className="gap-2"
+            className="h-10 text-xs border-border bg-white/5 hover:bg-white/10 text-white font-mono uppercase tracking-wider flex-1"
           >
-            <Save className="h-4 w-4" />
-            {saving ? "Saving..." : "Save Draft"}
+            {saving ? (
+              <>
+                <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />
+                CACHING...
+              </>
+            ) : (
+              <>
+                <Save className="h-3.5 w-3.5 mr-1.5" />
+                CACHE DRAFT
+              </>
+            )}
           </Button>
 
           <Button
             onClick={handlePublish}
             disabled={publishing || !title}
-            className="gap-2"
+            className="h-10 text-xs bg-primary hover:bg-primary/95 text-primary-foreground font-mono uppercase tracking-wider flex-1 glow-hover shadow-[0_0_15px_oklch(0.65_0.22_255/0.15)]"
           >
-            <Send className="h-4 w-4" />
-            {publishing ? "Publishing..." : "Publish"}
+            {publishing ? (
+              <>
+                <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />
+                PUBLISHING...
+              </>
+            ) : (
+              <>
+                <Send className="h-3.5 w-3.5 mr-1.5" />
+                PUBLISH NODE
+              </>
+            )}
           </Button>
         </div>
       </div>
 
       {/* Groq AI Assistant Sidebar */}
       <div className="lg:col-span-1">
-        <Card className="p-6 border-blue-100 bg-gradient-to-b from-blue-50/50 via-white to-white sticky top-24 shadow-sm">
-          <div className="flex items-center gap-2 mb-4 border-b pb-3 border-gray-100">
-            <div className="p-1.5 bg-blue-100 rounded-lg text-blue-600">
+        <Card className="p-6 bg-white/[0.01] border-border rounded Palantir-shadow relative overflow-hidden sticky top-24">
+          <div className="absolute inset-0 cyber-grid pointer-events-none opacity-[0.02]" />
+
+          <div className="flex items-center gap-3 pb-4 border-b border-border/40 mb-5">
+            <div className="p-2 bg-primary/10 border border-primary/20 rounded text-primary shadow-[0_0_10px_oklch(0.65_0.22_255/0.1)]">
               <Sparkles className="h-5 w-5 animate-pulse" />
             </div>
             <div>
-              <h2 className="font-bold text-gray-900">Groq Assistant</h2>
-              <p className="text-xs text-gray-500">Powered by Qwen 2.5 32B</p>
+              <h2 className="font-bold text-white font-mono uppercase tracking-wider text-sm">AI Copilot</h2>
+              <p className="text-[9px] text-muted-foreground font-mono uppercase">Model: Qwen 2.5 32B (Groq)</p>
             </div>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-5">
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                Ask AI / Custom Prompt
+              <label className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest block">
+                COGNITIVE PROMPT INTERFACE
               </label>
               <Textarea
-                placeholder='e.g., "Write an outline for an article about remote work" or paste text here to enhance it.'
+                placeholder='e.g., "Outline key concepts regarding distributed microservices" or paste text here to enhance it.'
                 value={aiPrompt}
                 onChange={(e) => setAiPrompt(e.target.value)}
                 rows={3}
-                className="text-sm"
+                className="bg-background border-border text-white placeholder:text-muted-foreground focus:border-primary/40 focus:ring-primary/20 text-xs leading-relaxed"
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-2 font-mono">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => callGroqAI("outline", aiPrompt)}
                 disabled={aiLoading || !aiPrompt.trim()}
-                className="gap-1 text-xs"
+                className="h-8 text-[10px] border-border bg-white/5 hover:bg-white/10 text-white uppercase tracking-wider flex items-center justify-center gap-1"
               >
-                <ListPlus className="h-3 w-3" /> Outline Topic
+                <ListPlus className="h-3 w-3" /> Outline
               </Button>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => callGroqAI("enhance", aiPrompt)}
                 disabled={aiLoading || !aiPrompt.trim()}
-                className="gap-1 text-xs"
+                className="h-8 text-[10px] border-border bg-white/5 hover:bg-white/10 text-white uppercase tracking-wider flex items-center justify-center gap-1"
               >
-                <Sparkles className="h-3 w-3" /> Enhance Text
+                <Sparkles className="h-3 w-3" /> Enhance
               </Button>
             </div>
 
             {aiLoading && (
-              <div className="p-8 text-center border border-dashed rounded-lg border-gray-200 bg-white">
-                <Loader2 className="h-6 w-6 animate-spin mx-auto text-blue-600 mb-2" />
-                <p className="text-xs text-gray-500">Groq is thinking...</p>
+              <div className="py-8 text-center border border-dashed rounded border-border/80 bg-white/[0.01] flex flex-col items-center justify-center gap-2">
+                <Loader2 className="h-5 w-5 animate-spin text-primary" />
+                <p className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">Awaiting response from core AI...</p>
               </div>
             )}
 
             {aiResult && !aiLoading && (
-              <div className="space-y-3">
-                <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider block">
-                  AI Result
+              <div className="space-y-3 pt-2">
+                <label className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest block">
+                  AI SUGGESTION REPORT
                 </label>
-                <div className="p-3 border rounded-lg bg-gray-50 max-h-60 overflow-y-auto text-sm text-gray-700 whitespace-pre-wrap font-sans">
+                <div className="p-3 border border-border rounded bg-background max-h-60 overflow-y-auto text-xs text-muted-foreground leading-relaxed whitespace-pre-wrap font-sans">
                   {aiResult}
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-2 font-mono">
                   <Button
                     size="sm"
                     variant="outline"
                     onClick={copyToClipboard}
-                    className="flex-1 gap-1 text-xs"
+                    className="flex-1 h-8 text-[10px] border-border bg-white/5 hover:bg-white/10 text-white uppercase tracking-wider"
                   >
                     {aiCopied ? (
                       <>
-                        <Check className="h-3 w-3 text-green-600" /> Copied
+                        <Check className="h-3.5 w-3.5 text-emerald-400 mr-1" /> Copied
                       </>
                     ) : (
                       <>
-                        <Copy className="h-3 w-3" /> Copy
+                        <Copy className="h-3.5 w-3.5 mr-1" /> Copy
                       </>
                     )}
                   </Button>
                   <Button
                     size="sm"
                     onClick={insertIntoEditor}
-                    className="flex-1 gap-1 text-xs"
+                    className="flex-1 h-8 text-[10px] bg-primary hover:bg-primary/95 text-primary-foreground uppercase tracking-wider glow-hover"
                   >
-                    <FileText className="h-3 w-3" /> Insert
+                    <FileText className="h-3.5 w-3.5 mr-1" /> Insert
                   </Button>
                 </div>
               </div>
