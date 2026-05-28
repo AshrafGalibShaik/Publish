@@ -16,8 +16,11 @@ export async function middleware(request: NextRequest) {
           return request.cookies.getAll();
         },
         setAll(cookiesToSet: Array<{ name: string; value: string; options: any }>) {
-          cookiesToSet.forEach(({ name, value, options }) => {
+          cookiesToSet.forEach(({ name, value }) => {
             request.cookies.set(name, value);
+          });
+          supabaseResponse = NextResponse.next({ request });
+          cookiesToSet.forEach(({ name, value, options }) => {
             supabaseResponse.cookies.set(name, value, options);
           });
         },
@@ -30,10 +33,16 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Redirect unauthenticated users to login (except public routes)
+  // Redirect unauthenticated users to login (except public paths and content slug paths)
   const publicPaths = ["/", "/login", "/signup", "/auth/callback"];
-  const isPublic = publicPaths.some((p) => request.nextUrl.pathname === p);
-  const isStatic = request.nextUrl.pathname.startsWith("/_next") ||
+  
+  const isPublic = 
+    publicPaths.some((p) => request.nextUrl.pathname === p) ||
+    request.nextUrl.pathname.startsWith("/publications") ||
+    request.nextUrl.pathname.startsWith("/content/");
+
+  const isStatic = 
+    request.nextUrl.pathname.startsWith("/_next") ||
     request.nextUrl.pathname.startsWith("/favicon") ||
     request.nextUrl.pathname.includes(".");
 

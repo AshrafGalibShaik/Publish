@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { DraftList } from "@/components/DraftList";
 import { ContentSearch } from "@/components/ContentSearch";
 import Link from "next/link";
-import { Plus, BookOpen, FileText, LogOut, Loader2 } from "lucide-react";
+import { Plus, BookOpen, FileText, LogOut, Loader2, User } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -38,6 +38,12 @@ export default function DashboardPage() {
           </div>
 
           <div className="flex items-center gap-2">
+            <Link href="/profile">
+              <Button size="sm" variant="ghost" className="text-sm gap-1.5 h-8 text-muted-foreground hover:text-foreground">
+                <User className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">Profile</span>
+              </Button>
+            </Link>
             <Link href="/editor">
               <Button size="sm" className="text-sm gap-1.5 h-8">
                 <Plus className="h-3.5 w-3.5" />
