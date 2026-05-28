@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Content, supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Calendar, ArrowLeft, Share2, Cpu, Terminal, FileText, Activity } from "lucide-react";
+import { Calendar, ArrowLeft, Share2, Cpu, Terminal, FileText } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { toast } from "sonner";
 import Link from "next/link";
@@ -55,7 +55,7 @@ export function PublishedContent({ slug }: PublishedContentProps) {
   if (loading) {
     return (
       <div className="max-w-3xl mx-auto py-16 flex flex-col items-center justify-center text-muted-foreground font-mono text-xs uppercase tracking-widest gap-2">
-        <Cpu className="h-5 w-5 animate-spin text-primary" />
+        <Cpu className="h-5 w-5 animate-spin text-foreground" />
         <span>Syncing Content Snapshot...</span>
       </div>
     );
@@ -64,13 +64,13 @@ export function PublishedContent({ slug }: PublishedContentProps) {
   if (!content) {
     return (
       <div className="max-w-3xl mx-auto py-8 px-4 relative z-10">
-        <Card className="p-8 text-center bg-white/[0.01] border-border rounded Palantir-shadow relative overflow-hidden">
+        <Card className="p-8 text-center bg-white border-border rounded relative overflow-hidden">
           <Terminal className="h-8 w-8 text-muted-foreground mx-auto mb-4" />
           <p className="text-muted-foreground font-mono text-xs uppercase tracking-widest mb-4">
             Snapshot record not found in system logs
           </p>
           <Link href="/dashboard">
-            <Button size="sm" variant="outline" className="h-8 text-xs border-border bg-white/5 hover:bg-white/10 text-white font-mono uppercase tracking-wider">
+            <Button size="sm" variant="outline" className="h-8 text-xs border-border bg-white hover:bg-secondary text-foreground font-mono uppercase tracking-wider">
               <ArrowLeft className="h-3.5 w-3.5 mr-1" /> RETURN TO WORKSPACE
             </Button>
           </Link>
@@ -80,10 +80,10 @@ export function PublishedContent({ slug }: PublishedContentProps) {
   }
 
   return (
-    <div className="max-w-3xl mx-auto py-8 px-4 relative z-10 space-y-6">
-      <div className="flex items-center justify-between font-mono text-[10px] text-muted-foreground uppercase border-b border-border/40 pb-3">
+    <div className="max-w-3xl mx-auto py-8 px-4 sm:px-6 relative z-10 space-y-6">
+      <div className="flex items-center justify-between font-mono text-[10px] text-muted-foreground uppercase border-b border-border pb-3">
         <Link href="/dashboard">
-          <Button variant="ghost" className="h-8 text-xs text-muted-foreground hover:text-white px-2 gap-1.5 transition-colors uppercase">
+          <Button variant="ghost" className="h-8 text-xs text-muted-foreground hover:text-foreground px-2 gap-1.5 transition-colors uppercase">
             <ArrowLeft className="h-3.5 w-3.5" />
             Workspace
           </Button>
@@ -95,40 +95,39 @@ export function PublishedContent({ slug }: PublishedContentProps) {
       </div>
 
       <div className="space-y-4">
-        <div className="flex items-center gap-2">
-          <FileText className="h-4.5 w-4.5 text-primary" />
-          <span className="text-[9px] font-mono text-primary/60 border border-primary/20 px-1.5 py-0.5 rounded bg-primary/5 uppercase">
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="text-[9px] font-mono text-muted-foreground border border-border px-1.5 py-0.5 rounded bg-secondary uppercase">
             DOC_ID: {content.id.slice(0, 8)}
           </span>
           {content.topic && (
-            <span className="text-[9px] font-mono text-white/60 border border-border px-1.5 py-0.5 rounded bg-secondary uppercase tracking-wider">
+            <span className="text-[9px] font-mono text-muted-foreground border border-border px-1.5 py-0.5 rounded bg-secondary uppercase tracking-wider">
               {content.topic}
             </span>
           )}
         </div>
 
-        <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white uppercase font-sans">
+        <h1 className="text-2xl sm:text-3.5xl font-serif tracking-tight text-foreground font-medium leading-tight">
           {content.title}
         </h1>
 
         <div className="flex items-center gap-3 font-mono text-[10px] text-muted-foreground">
-          <Calendar className="h-3.5 w-3.5 text-primary" />
+          <Calendar className="h-3.5 w-3.5 text-foreground" />
           <span className="uppercase">
             PUBLISHED {formatDistanceToNow(new Date(content.published_at!), { addSuffix: true })}
           </span>
         </div>
 
         {content.description && (
-          <p className="text-sm text-muted-foreground leading-relaxed font-mono border-l-2 border-primary/30 pl-4 py-1 italic">
+          <p className="text-sm text-muted-foreground leading-relaxed font-mono border-l-2 border-border pl-4 py-1 italic">
             {content.description}
           </p>
         )}
       </div>
 
-      <Card className="p-6 bg-white/[0.01] border-border rounded Palantir-shadow relative overflow-hidden">
-        <div className="absolute inset-0 cyber-grid pointer-events-none opacity-[0.01]" />
+      {/* Responsive White Card Container with Crisp Black Text */}
+      <Card className="p-5 sm:p-8 bg-white border border-border rounded-lg relative overflow-hidden">
         <div
-          className="prose prose-invert max-w-none text-muted-foreground leading-relaxed text-sm sm:text-base whitespace-pre-wrap"
+          className="prose max-w-none text-foreground leading-relaxed text-sm sm:text-base whitespace-pre-wrap font-sans"
           dangerouslySetInnerHTML={{ __html: content.content_html }}
         />
       </Card>
@@ -137,7 +136,7 @@ export function PublishedContent({ slug }: PublishedContentProps) {
         <Button
           onClick={handleShare}
           variant="outline"
-          className="h-9.5 text-xs border-border bg-white/5 hover:bg-white/10 text-white uppercase tracking-wider flex items-center gap-1.5"
+          className="h-9 text-xs border border-border bg-white hover:bg-secondary text-foreground uppercase tracking-wider flex items-center gap-1.5"
         >
           <Share2 className="h-4 w-4" />
           Share Coordinates
