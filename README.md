@@ -1,4 +1,4 @@
-# Content Publishing & Draft Management Platform
+# Content Publishing & Draft Management Platform - freelance
 
 A modern, full-stack content publishing system with draft management, version control, and AI-powered semantic search built with Next.js 16, Supabase, and Better Auth.
 
