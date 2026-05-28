@@ -5,7 +5,7 @@ import { Content, supabase } from "@/lib/supabase";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Search, Loader2, AlertCircle, Sparkles, Terminal, Activity, FileText, ArrowUpRight } from "lucide-react";
+import { Search, Loader2, AlertCircle, Sparkles, Terminal, Activity, FileText, ArrowUpRight, Cpu } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
