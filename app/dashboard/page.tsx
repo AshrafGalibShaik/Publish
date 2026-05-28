@@ -4,8 +4,9 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { DraftList } from "@/components/DraftList";
 import { ContentSearch } from "@/components/ContentSearch";
+import { ExploreArticles } from "@/components/ExploreArticles";
 import Link from "next/link";
-import { Plus, BookOpen, FileText, LogOut, Loader2, User } from "lucide-react";
+import { Plus, Compass, FileText, LogOut, Loader2, User, Search } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -62,16 +63,19 @@ export default function DashboardPage() {
       <main className="flex-1 max-w-5xl w-full mx-auto px-5 sm:px-8 py-10">
         <div className="mb-10">
           <h1 className="font-serif text-3xl text-foreground mb-1">Dashboard</h1>
-          <p className="text-sm text-muted-foreground">Manage drafts and search published content.</p>
+          <p className="text-sm text-muted-foreground">Manage drafts and explore published database nodes.</p>
         </div>
 
         <Tabs defaultValue="drafts" className="space-y-8">
-          <TabsList className="bg-secondary/50 border border-border p-0.5 rounded-md w-full max-w-[240px] grid grid-cols-2 h-9">
+          <TabsList className="bg-secondary/50 border border-border p-0.5 rounded-md w-full max-w-[360px] grid grid-cols-3 h-9">
             <TabsTrigger value="drafts" className="gap-1.5 text-xs data-[state=active]:bg-white data-[state=active]:shadow-sm rounded">
               <FileText className="h-3.5 w-3.5" /> Drafts
             </TabsTrigger>
             <TabsTrigger value="search" className="gap-1.5 text-xs data-[state=active]:bg-white data-[state=active]:shadow-sm rounded">
-              <BookOpen className="h-3.5 w-3.5" /> Search
+              <Search className="h-3.5 w-3.5" /> Search
+            </TabsTrigger>
+            <TabsTrigger value="explore" className="gap-1.5 text-xs data-[state=active]:bg-white data-[state=active]:shadow-sm rounded">
+              <Compass className="h-3.5 w-3.5" /> Explore
             </TabsTrigger>
           </TabsList>
 
@@ -80,6 +84,9 @@ export default function DashboardPage() {
           </TabsContent>
           <TabsContent value="search" className="outline-none">
             <ContentSearch />
+          </TabsContent>
+          <TabsContent value="explore" className="outline-none">
+            <ExploreArticles />
           </TabsContent>
         </Tabs>
       </main>
