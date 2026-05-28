@@ -26,7 +26,6 @@ export async function POST(request: NextRequest) {
     const supabaseAdmin = getSupabase();
 
     // Search for similar content using vector similarity
-    // We'll use a raw SQL query for vector search
     const { data, error } = await supabaseAdmin.rpc("search_content_embeddings", {
       query_embedding: queryEmbedding,
       similarity_threshold: 0.7,
@@ -38,7 +37,14 @@ export async function POST(request: NextRequest) {
       // Fallback to full-text search if RPC not available
       const { data: fallbackData } = await supabaseAdmin
         .from("content")
-        .select("*")
+        .select(`
+          *,
+          author:users (
+            id,
+            name,
+            email
+          )
+        `)
         .eq("status", "published")
         .or(
           `title.ilike.%${query}%,description.ilike.%${query}%,content_text.ilike.%${query}%,topic.ilike.%${query}%`
@@ -46,6 +52,27 @@ export async function POST(request: NextRequest) {
         .limit(10);
 
       return NextResponse.json({ results: fallbackData || [] });
+    }
+
+    // Enrich semantic results with author profiles
+    if (data && data.length > 0) {
+      const userIds = Array.from(new Set(data.map((item: any) => item.user_id)));
+      const { data: usersData } = await supabaseAdmin
+        .from("users")
+        .select("id, name, email")
+        .in("id", userIds);
+
+      const usersMap = (usersData || []).reduce((acc: any, user: any) => {
+        acc[user.id] = user;
+        return acc;
+      }, {});
+
+      const resultsWithAuthor = data.map((item: any) => ({
+        ...item,
+        author: usersMap[item.user_id] || null
+      }));
+
+      return NextResponse.json({ results: resultsWithAuthor });
     }
 
     return NextResponse.json({ results: data || [] });

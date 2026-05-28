@@ -1,222 +1,203 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import Link from "next/link";
-import { 
-  FileText, 
-  Lock, 
-  Zap, 
-  BookOpen, 
-  BarChart3, 
-  Share2, 
-  ArrowRight, 
-  Binary, 
-  Cpu, 
-  Database,
-  Search,
-  Sparkles,
-  GitBranch
-} from "lucide-react";
+import { ArrowRight, FileText, GitBranch, Search, Sparkles, Shield, Zap, Globe, Cpu, CheckCircle } from "lucide-react";
+import Image from "next/image";
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-background text-foreground relative overflow-hidden selection:bg-primary/20 selection:text-primary">
-      {/* Background Cyber Grid */}
-      <div className="absolute inset-0 cyber-grid pointer-events-none opacity-40" />
-
-      {/* Decorative Radial Lighting */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-10%] left-[20%] w-[600px] h-[600px] rounded-full bg-primary/10 blur-[150px] animate-pulse duration-[8000ms]" />
-        <div className="absolute bottom-[-10%] right-[10%] w-[500px] h-[500px] rounded-full bg-indigo-500/5 blur-[120px]" />
-      </div>
-
-      {/* Futuristic Command Header */}
-      <header className="border-b border-border bg-background/60 backdrop-blur-md sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="relative flex items-center justify-center w-9 h-9 rounded bg-primary/10 border border-primary/30 shadow-[0_0_10px_oklch(0.65_0.22_255/0.1)]">
-              <Binary className="h-5 w-5 text-primary" />
-              <div className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
-            </div>
-            <span className="text-lg font-bold tracking-wider text-white font-mono uppercase">
-              PUBLISH<span className="text-primary font-sans font-normal text-xs ml-1 border border-primary/30 px-1 rounded bg-primary/5 uppercase">Foundry v1</span>
-            </span>
-          </div>
-
-          <div className="flex gap-4 items-center font-mono">
+    <div className="min-h-screen bg-white text-foreground">
+      {/* ── Header ── */}
+      <header className="border-b border-border bg-white sticky top-0 z-50">
+        <div className="max-w-5xl mx-auto px-5 sm:px-8 h-14 flex items-center justify-between">
+          <Link href="/" className="font-serif text-xl tracking-tight text-foreground flex items-center gap-2">
+            <span className="font-bold">PUBLISH</span>
+            <span className="text-xs uppercase tracking-[0.25em] text-muted-foreground border-l border-border pl-2 font-sans font-medium">Enterprise</span>
+          </Link>
+          <nav className="flex items-center gap-2">
+            <Link href="/publications">
+              <Button variant="ghost" size="sm" className="text-xs font-medium uppercase tracking-wider text-muted-foreground hover:text-foreground">
+                Registry
+              </Button>
+            </Link>
             <Link href="/login">
-              <span className="text-xs text-muted-foreground hover:text-white transition-colors cursor-pointer px-3 py-1.5 rounded hover:bg-white/5 uppercase">
+              <Button variant="ghost" size="sm" className="text-xs font-medium uppercase tracking-wider text-muted-foreground hover:text-foreground">
                 Sign In
-              </span>
+              </Button>
             </Link>
             <Link href="/signup">
-              <Button size="sm" className="h-8 text-xs bg-primary hover:bg-primary/95 text-primary-foreground font-mono uppercase tracking-wider glow-hover">
-                Sign Up
+              <Button size="sm" className="text-xs uppercase tracking-wider h-8">
+                Get Started
               </Button>
             </Link>
-            <div className="h-4 w-[1px] bg-border" />
-            <Link href="/dashboard">
-              <Button size="sm" variant="outline" className="h-8 text-xs border-border bg-white/5 hover:bg-white/10 text-white font-mono uppercase tracking-wider">
-                Dashboard
-              </Button>
-            </Link>
-          </div>
+          </nav>
         </div>
       </header>
 
-      {/* Cyber Hero Console */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 relative z-10">
-        <div className="text-center space-y-8 mb-20">
-          {/* Palantir Command Status Bar */}
-          <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-white/[0.02] border border-border/80 backdrop-blur-sm text-xs text-muted-foreground font-mono">
-            <Cpu className="h-3.5 w-3.5 text-primary animate-spin duration-[4000ms]" />
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-            <span>NODE STATUS: ONLINE</span>
-            <span className="text-border">|</span>
-            <span>AI ENGINE: READY</span>
-          </div>
-
-          <div className="space-y-4 max-w-4xl mx-auto">
-            <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-white text-balance uppercase">
-              Create, Analyze & Publish
-              <br />
-              <span className="bg-gradient-to-r from-primary via-indigo-400 to-primary bg-clip-text text-transparent drop-shadow-[0_0_15px_oklch(0.65_0.22_255/0.1)]">
-                Content with Intelligence
-              </span>
+      {/* ── Hero section ── */}
+      <section className="max-w-5xl mx-auto px-5 sm:px-8 pt-20 sm:pt-28 pb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          <div className="lg:col-span-6 space-y-6">
+            <p className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground font-bold font-mono">
+              SECURE DECENTRALIZED DATA FABRIC
+            </p>
+            <h1 className="font-serif text-[2.75rem] sm:text-[3.75rem] leading-[1.05] tracking-tight text-foreground font-light">
+              Corporate publishing <br />
+              <span className="italic">reimagined.</span>
             </h1>
-            <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto font-mono text-balance">
-              A high-density content operations control center integrated with real-time version logs, auto-saving drafts, and semantic AI queries.
+            <p className="text-base text-muted-foreground leading-relaxed max-w-lg">
+              Publish is the premier workspace built for corporate teams to draft, index, and securely search institutional intelligence using custom AI semantic vectors.
             </p>
+            <div className="flex flex-col sm:flex-row gap-3 pt-2">
+              <Link href="/dashboard">
+                <Button size="lg" className="w-full sm:w-auto h-11 px-7 text-xs uppercase tracking-wider">
+                  Open Console <ArrowRight className="ml-2 h-3.5 w-3.5" />
+                </Button>
+              </Link>
+              <Link href="/publications">
+                <Button size="lg" variant="outline" className="w-full sm:w-auto h-11 px-7 text-xs uppercase tracking-wider border-border text-foreground hover:bg-secondary">
+                  Explore Ledger
+                </Button>
+              </Link>
+            </div>
           </div>
 
-          <div className="flex gap-4 justify-center pt-4">
-            <Link href="/dashboard">
-              <Button size="lg" className="h-12 px-6 bg-primary hover:bg-primary/95 text-primary-foreground font-mono uppercase tracking-wider text-sm glow-hover shadow-[0_4px_20px_oklch(0.65_0.22_255/0.15)]">
-                ENTER CONTROL HUB <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
-            <Link href="/editor">
-              <Button size="lg" variant="outline" className="h-12 px-6 border-border hover:bg-white/5 text-white font-mono uppercase tracking-wider text-sm">
-                INITIALIZE DRAFT
-              </Button>
-            </Link>
-          </div>
-        </div>
-
-        {/* Dense Analytics Grid Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 py-12 relative">
-          <Card className="relative p-6 bg-white/[0.01] hover:bg-white/[0.02] border-border hover:border-primary/30 transition-all duration-300 Palantir-shadow group glow-hover rounded overflow-hidden">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full blur-2xl pointer-events-none" />
-            <div className="flex items-center justify-between mb-4">
-              <FileText className="h-8 w-8 text-primary group-hover:scale-110 transition-transform duration-300" />
-              <span className="text-[10px] font-mono text-primary/60 border border-primary/20 px-1.5 py-0.5 rounded bg-primary/5">OP.DRF-98</span>
+          <div className="lg:col-span-6">
+            <div className="border border-border p-3 rounded-lg bg-secondary/10">
+              <div className="relative aspect-[4/3] w-full overflow-hidden rounded border border-border bg-white">
+                <Image
+                  src="/corporate_hero.png"
+                  alt="Publish secure network node interface illustration"
+                  fill
+                  className="object-cover"
+                  priority
+                />
+              </div>
+              <div className="mt-3 flex items-center justify-between text-[10px] font-mono text-muted-foreground uppercase px-1">
+                <span>SYSTEM SCHEMATIC 001</span>
+                <span>INTEGRITY MATRIX ACTIVE</span>
+              </div>
             </div>
-            <h3 className="text-base font-bold text-white font-mono uppercase tracking-wide mb-2">
-              DRAFT MANAGEMENT
-            </h3>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              Auto-saving workspace caches drafts securely. Switch between actively monitored drafts with zero-latency recovery interfaces.
-            </p>
-            <div className="mt-4 pt-4 border-t border-border/60 flex items-center justify-between text-[10px] font-mono text-muted-foreground">
-              <span>LATENCY: 0.04ms</span>
-              <span>CACHE: SYNCED</span>
-            </div>
-          </Card>
-
-          <Card className="relative p-6 bg-white/[0.01] hover:bg-white/[0.02] border-border hover:border-primary/30 transition-all duration-300 Palantir-shadow group glow-hover rounded overflow-hidden">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-500/5 rounded-full blur-2xl pointer-events-none" />
-            <div className="flex items-center justify-between mb-4">
-              <GitBranch className="h-8 w-8 text-primary group-hover:scale-110 transition-transform duration-300" />
-              <span className="text-[10px] font-mono text-primary/60 border border-primary/20 px-1.5 py-0.5 rounded bg-primary/5">SYS.LOG-2</span>
-            </div>
-            <h3 className="text-base font-bold text-white font-mono uppercase tracking-wide mb-2">
-              VERSIONING ENGINE
-            </h3>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              Granular revision logs trace every single paragraph transition. Inspect full diff tracking, comparison analytics, and restore points instantly.
-            </p>
-            <div className="mt-4 pt-4 border-t border-border/60 flex items-center justify-between text-[10px] font-mono text-muted-foreground">
-              <span>COMPRESSION: GZ</span>
-              <span>LOGS: SECURE</span>
-            </div>
-          </Card>
-
-          <Card className="relative p-6 bg-white/[0.01] hover:bg-white/[0.02] border-border hover:border-primary/30 transition-all duration-300 Palantir-shadow group glow-hover rounded overflow-hidden">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-cyan-500/5 rounded-full blur-2xl pointer-events-none" />
-            <div className="flex items-center justify-between mb-4">
-              <Zap className="h-8 w-8 text-primary group-hover:scale-110 transition-transform duration-300" />
-              <span className="text-[10px] font-mono text-primary/60 border border-primary/20 px-1.5 py-0.5 rounded bg-primary/5">VEC.SRCH-7</span>
-            </div>
-            <h3 className="text-base font-bold text-white font-mono uppercase tracking-wide mb-2">
-              SEMANTIC DISCOVERY
-            </h3>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              Vector index mapping powers advanced cognitive semantic searches. Find published concepts based on contextual similarity rather than matching keywords.
-            </p>
-            <div className="mt-4 pt-4 border-t border-border/60 flex items-center justify-between text-[10px] font-mono text-muted-foreground">
-              <span>VECTOR MODEL: MiniLM-L6</span>
-              <span>DIMENSIONS: 1536</span>
-            </div>
-          </Card>
-        </div>
-      </section>
-
-      {/* Command Stats Summary Bar */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 border-y border-border/80 bg-white/[0.01] relative z-10">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center font-mono">
-          <div className="space-y-1">
-            <p className="text-2xl font-bold text-white tracking-wider">100%</p>
-            <p className="text-[10px] text-muted-foreground uppercase tracking-widest">Database Sync Integrity</p>
-          </div>
-          <div className="space-y-1">
-            <p className="text-2xl font-bold text-primary tracking-wider">99.98%</p>
-            <p className="text-[10px] text-muted-foreground uppercase tracking-widest">AI Content Generation</p>
-          </div>
-          <div className="space-y-1">
-            <p className="text-2xl font-bold text-white tracking-wider">0.05ms</p>
-            <p className="text-[10px] text-muted-foreground uppercase tracking-widest">Query Response Latency</p>
-          </div>
-          <div className="space-y-1">
-            <p className="text-2xl font-bold text-primary tracking-wider">AES-256</p>
-            <p className="text-[10px] text-muted-foreground uppercase tracking-widest">Row-Level Security Enc</p>
           </div>
         </div>
       </section>
 
-      {/* Control Console Visual Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 relative z-10">
-        <Card className="relative p-12 bg-white/[0.01] border-border text-center overflow-hidden rounded Palantir-shadow border shadow-2xl">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[350px] h-[350px] bg-primary/10 rounded-full blur-[80px] pointer-events-none" />
-          <div className="relative z-10 space-y-6 max-w-2xl mx-auto">
-            <div className="inline-flex p-3 rounded bg-primary/5 border border-primary/30">
-              <Database className="h-6 w-6 text-primary" />
+      {/* ── Client / Trust Bar ── */}
+      <section className="border-y border-border bg-secondary/20">
+        <div className="max-w-5xl mx-auto px-5 sm:px-8 py-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 text-[10px] font-mono text-muted-foreground uppercase tracking-widest">
+          <span>OPERATING PRINCIPLES</span>
+          <div className="flex flex-wrap gap-x-8 gap-y-2">
+            <span>IMMUTABLE HISTORY</span>
+            <span>COSINE SIMILARITY</span>
+            <span>DECISION INTELLIGENCE</span>
+            <span>ENTERPRISE RLS</span>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Corporate Details / Product Value ── */}
+      <section className="max-w-5xl mx-auto px-5 sm:px-8 py-20 sm:py-28">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+          <div className="lg:col-span-6 order-last lg:order-first">
+            <div className="border border-border p-3 rounded-lg bg-secondary/10">
+              <div className="relative aspect-[4/3] w-full overflow-hidden rounded border border-border bg-white">
+                <Image
+                  src="/corporate_features.png"
+                  alt="High-density network visualization graphic"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              <div className="mt-3 flex items-center justify-between text-[10px] font-mono text-muted-foreground uppercase px-1">
+                <span>DECISION GRAPH 002</span>
+                <span>STABILITY INDEX: 100%</span>
+              </div>
             </div>
-            <h2 className="text-3xl font-bold text-white font-mono uppercase tracking-wide">
-              Secure Operations Sandbox
+          </div>
+
+          <div className="lg:col-span-6 space-y-6">
+            <p className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground font-bold font-mono">
+              SYSTEM ARCHITECTURE
+            </p>
+            <h2 className="font-serif text-2xl sm:text-3xl text-foreground font-light">
+              Built for institutional precision.
             </h2>
-            <p className="text-xs sm:text-sm text-muted-foreground font-mono leading-relaxed">
-              Every content creation step, revision node, and AI request is mapped, recorded, and encrypted directly on your secure Postgres instance. Enter the control dashboard to view live operation tables.
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Engineered to support modern knowledge management workflows, Publish leverages decentralized vector pipelines to ensure your teams can retrieve relevant documents based on semantic context, intent, and relationships rather than simple keywords.
             </p>
-            <Link href="/dashboard">
-              <Button size="lg" className="mt-4 px-8 bg-primary hover:bg-primary/95 text-primary-foreground font-mono uppercase tracking-wider text-xs glow-hover">
-                LAUNCH OPERATIONS PANEL
-              </Button>
-            </Link>
+
+            <div className="space-y-4 pt-2 font-mono text-xs">
+              {[
+                "10-Second Automatic Draft Persistence",
+                "Full Cryptographic Version Snapshot Log",
+                "Built-in RLS Security Policies via PostgreSQL",
+                "Groq qwen-2.5-32b Intelligent Drafting Co-pilot"
+              ].map((text) => (
+                <div key={text} className="flex items-center gap-2">
+                  <CheckCircle className="h-4 w-4 text-foreground" strokeWidth={2} />
+                  <span>{text}</span>
+                </div>
+              ))}
+            </div>
           </div>
-        </Card>
+        </div>
       </section>
 
-      {/* Technical Footer */}
-      <footer className="border-t border-border bg-background relative z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col md:flex-row items-center justify-between text-xs text-muted-foreground font-mono">
-          <div className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-            <span>OPERATING ON SECURE CLOUD GATEWAY</span>
-          </div>
-          <p className="mt-4 md:mt-0">
-            FOUNDRY OPERATIONS © 2026 | ALL RIGHTS RESERVED
+      {/* ── Features Matrix ── */}
+      <section className="border-t border-border bg-secondary/10">
+        <div className="max-w-5xl mx-auto px-5 sm:px-8 py-20 sm:py-28">
+          <p className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground font-bold font-mono mb-2">
+            INTEGRATED CAPABILITIES
           </p>
+          <h2 className="font-serif text-2xl sm:text-3xl text-foreground font-light mb-12">
+            The Knowledge Fabric Suite
+          </h2>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-border rounded-lg overflow-hidden border border-border">
+            {[
+              { icon: FileText, title: "Draft Persistence", desc: "Our active background loop stores work-in-progress content every 10 seconds securely." },
+              { icon: GitBranch, title: "Immutable Snapshot Logs", desc: "Every publish instantiates a verifiable static branch. Restore previous edits at any coordinate." },
+              { icon: Search, title: "Semantic Matrix Search", desc: "Find documents using high-dimensional cosine similarity vectors instead of archaic keywords." },
+              { icon: Sparkles, title: "Cognitive Drafting Suite", desc: "Use advanced LLM co-piloting to auto-generate tag schemas, brief outlines, and abstracts." },
+              { icon: Shield, title: "Row-Level RLS Boundaries", desc: "PostgreSQL row-level isolation policies guarantee absolute data boundaries for all tenant channels." },
+              { icon: Zap, title: "High-Frequency Indexing", desc: "Published nodes are vectorized and immediately integrated into the global catalog in real-time." },
+            ].map(({ icon: Icon, title, desc }) => (
+              <div key={title} className="bg-white p-6 sm:p-8 space-y-3">
+                <div className="w-8 h-8 rounded bg-secondary flex items-center justify-center">
+                  <Icon className="h-4 w-4 text-foreground" strokeWidth={1.5} />
+                </div>
+                <h3 className="font-medium text-foreground text-sm">{title}</h3>
+                <p className="text-xs text-muted-foreground leading-relaxed">{desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Verification Banner ── */}
+      <section className="border-t border-border">
+        <div className="max-w-5xl mx-auto px-5 sm:px-8 py-20 sm:py-24 text-center space-y-6">
+          <Globe className="h-8 w-8 text-foreground mx-auto" strokeWidth={1.5} />
+          <h2 className="font-serif text-3xl text-foreground font-light">
+            Verify any publication in real-time.
+          </h2>
+          <p className="text-sm text-muted-foreground max-w-md mx-auto leading-relaxed">
+            Our public ledgers are publicly auditable. Search the entire decentralized corporate catalog with comprehensive authorship trace elements.
+          </p>
+          <Link href="/publications">
+            <Button size="lg" className="h-11 px-8 text-xs uppercase tracking-wider">
+              Verify Publications Ledger
+            </Button>
+          </Link>
+        </div>
+      </section>
+
+      {/* ── Footer ── */}
+      <footer className="border-t border-border bg-secondary/10">
+        <div className="max-w-5xl mx-auto px-5 sm:px-8 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-[10px] font-mono text-muted-foreground uppercase">
+          <span className="font-serif text-sm text-foreground lowercase">publish.corp</span>
+          <span>© 2026 PUBLISH SYSTEM INC. ALL RIGHTS RESERVED.</span>
         </div>
       </footer>
     </div>
