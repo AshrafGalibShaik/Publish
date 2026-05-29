@@ -99,8 +99,8 @@ POSTGRES_URL=your_postgres_connection_url
 # Better Auth (generate with: openssl rand -base64 32)
 BETTER_AUTH_SECRET=your_secret_key
 
-# OpenAI
-OPENAI_API_KEY=your_openai_api_key
+# Groq API Key
+GROQ_API_KEY=your_secret_key
 
 # App
 NEXT_PUBLIC_APP_URL=http://localhost:3000
