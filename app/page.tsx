@@ -309,7 +309,7 @@ export default function HomePage() {
           <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-3">
               <div className="w-6 h-6 rounded bg-foreground flex items-center justify-center">
-                <span className="text-[9px] font-mono font-bold text-primary-foreground">P</span>
+                <img src="Screenshot 2026-05-29 092754.png" alt="logo" className="w-full h-full object-countain"/>
               </div>
               <span className="font-serif text-sm text-foreground">publish.corp</span>
             </div>
