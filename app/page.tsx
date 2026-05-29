@@ -132,36 +132,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
-      {/* ── Metrics / Trust Bar ── */}
-      <section className="border-y border-border bg-white reveal-section">
-        <div className="max-w-6xl mx-auto px-5 sm:px-8 py-12 sm:py-16">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-y-8 sm:gap-y-10 md:gap-y-0 divide-x-0 md:divide-x divide-border">
-            {[
-              { value: "10s", label: "Auto-Save Cycle", desc: "Real-time background persistence loop" },
-              { value: "100%", label: "RLS Coverage", desc: "PostgreSQL Row-Level security boundaries" },
-              { value: "<50ms", label: "Vector Search", desc: "High-dimensional cosine semantic retrieval" },
-              { value: "∞", label: "Version History", desc: "Verifiable cryptographic ledger log" },
-            ].map(({ value, label, desc }) => (
-              <div key={label} className="flex flex-col px-4 sm:px-6 md:px-8 text-left group transition-all duration-300">
-                <div className="flex items-baseline gap-2 mb-2">
-                  <span className="metric-value text-3xl sm:text-4xl font-light tracking-tight text-foreground transition-transform duration-300 group-hover:translate-x-1">
-                    {value}
-                  </span>
-                  <span className="w-1.5 h-1.5 rounded-full bg-foreground pulse-dot opacity-60" />
-                </div>
-                <span className="text-[10px] font-mono font-bold tracking-widest text-foreground uppercase mb-1">
-                  {label}
-                </span>
-                <span className="text-xs text-muted-foreground leading-relaxed font-sans font-light">
-                  {desc}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ── Metrics / Trust Bar ── */}
       <section className="border-y border-border bg-white reveal-section">
         <div className="max-w-6xl mx-auto px-5 sm:px-8 py-12 sm:py-16">
@@ -207,63 +177,50 @@ export default function HomePage() {
       </section>
 
       {/* ── Corporate Details / Product Value ── */}
-      <section className="reveal-section">
-        <div className="max-w-6xl mx-auto px-5 sm:px-8 py-24 sm:py-32">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
-            <div className="lg:col-span-6 order-last lg:order-first">
-              <div className="gradient-border-card border border-border p-3 bg-secondary/10 hover-premium-card">
-                <div className="relative aspect-[4/3] w-full overflow-hidden rounded border border-border bg-white">
-                  <Image
-                    src="/corporate_features.png"
-                    alt="High-density network visualization graphic"
-                    fill
-                    className="object-cover transition-transform duration-700 hover:scale-[1.02]"
-                  />
-                </div>
-                <div className="mt-3 flex items-center justify-between text-[10px] font-mono text-muted-foreground uppercase px-1">
-                  <span className="flex items-center gap-1.5">
-                    <Cpu className="h-3 w-3" />
-                    DECISION GRAPH 002
-                  </span>
-                  <span className="flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 pulse-dot" />
-                    STABILITY INDEX: 100%
-                  </span>
-                </div>
-              </div>
-            </div>
+    <section className="reveal-section">
+      <div className="max-w-6xl mx-auto px-5 sm:px-8 py-24 sm:py-32">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+          <div className="lg:col-span-6 order-last lg:order-first">
+        <Image
+          src="/Screenshot 2026-05-29 102621.png"
+          alt="High-density network visualization graphic"
+          width={800}
+          height={600}
+          className="w-full h-auto"
+        />
+      </div>
 
-            <div className="lg:col-span-6 space-y-6">
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-secondary border border-border text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-mono font-bold">
-                <Sparkles className="h-3 w-3" />
-                SYSTEM ARCHITECTURE
-              </div>
-              <h2 className="font-serif text-3xl sm:text-4xl text-foreground font-light tracking-tight">
-                Built for institutional precision.
-              </h2>
-              <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-                Engineered to support modern knowledge management workflows, Publish leverages decentralized vector pipelines to ensure your teams can retrieve relevant documents based on semantic context, intent, and relationships rather than simple keywords.
-              </p>
-
-              <div className="space-y-4 pt-3">
-                {[
-                  "10-Second Automatic Draft Persistence",
-                  "Full Cryptographic Version Snapshot Log",
-                  "Built-in RLS Security Policies via PostgreSQL",
-                  "Groq qwen-2.5-32b Intelligent Drafting Co-pilot"
-                ].map((text, i) => (
-                  <div key={text} className="flex items-center gap-3 group cursor-default transition-all duration-300 hover:translate-x-1">
-                    <div className="w-6 h-6 rounded bg-foreground flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-110">
-                      <CheckCircle className="h-3.5 w-3.5 text-primary-foreground" strokeWidth={2} />
-                    </div>
-                    <span className="text-sm text-foreground font-medium">{text}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+      <div className="lg:col-span-6 space-y-6">
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-secondary border border-border text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-mono font-bold">
+          <Sparkles className="h-3 w-3" />
+          SYSTEM ARCHITECTURE
         </div>
-      </section>
+        <h2 className="font-serif text-3xl sm:text-4xl text-foreground font-light tracking-tight">
+          Built for institutional precision.
+        </h2>
+        <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
+          Engineered to support modern knowledge management workflows, Publish leverages decentralized vector pipelines to ensure your teams can retrieve relevant documents based on semantic context, intent, and relationships rather than simple keywords.
+        </p>
+
+        <div className="space-y-4 pt-3">
+          {[
+            "10-Second Automatic Draft Persistence",
+            "Full Cryptographic Version Snapshot Log",
+            "Built-in RLS Security Policies via PostgreSQL",
+            "Groq qwen-2.5-32b Intelligent Drafting Co-pilot"
+          ].map((text) => (
+            <div key={text} className="flex items-center gap-3 group cursor-default transition-all duration-300 hover:translate-x-1">
+              <div className="w-6 h-6 rounded bg-foreground flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-110">
+                <CheckCircle className="h-3.5 w-3.5 text-primary-foreground" strokeWidth={2} />
+              </div>
+              <span className="text-sm text-foreground font-medium">{text}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
       {/* ── Features Matrix ── */}
       <section className="border-t border-border bg-secondary/10 grain-overlay reveal-section">
