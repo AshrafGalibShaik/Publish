@@ -21,8 +21,8 @@ export const metadata: Metadata = {
   title: 'Publish — Content Platform',
   description: 'Create, edit, and publish content with draft management, version tracking, and AI-powered semantic search.',
   icons: {
-    icon: '/icon.jpeg',
-    apple: '/icon.jpeg',
+    icon: '/Screenshot 2026-05-29 092754.png',
+    apple: '/Screenshot 2026-05-29 092754.png',
   },
 }
 
