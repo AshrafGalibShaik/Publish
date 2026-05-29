@@ -145,18 +145,28 @@ export default function HomePage() {
       </section>
 
       {/* ── Metrics / Trust Bar ── */}
-      <section className="border-y border-border bg-secondary/30 reveal-section">
-        <div className="max-w-6xl mx-auto px-5 sm:px-8 py-0">
-          <div className="stats-grid">
+      <section className="border-y border-border bg-white reveal-section">
+        <div className="max-w-6xl mx-auto px-5 sm:px-8 py-12 sm:py-16">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-y-8 sm:gap-y-10 md:gap-y-0 divide-x-0 md:divide-x divide-border">
             {[
-              { value: "10s", label: "Auto-Save Cycle" },
-              { value: "100%", label: "RLS Coverage" },
-              { value: "<50ms", label: "Vector Search" },
-              { value: "∞", label: "Version History" },
-            ].map(({ value, label }) => (
-              <div key={label} className="flex flex-col items-center justify-center gap-1 py-5 sm:py-7">
-                <span className="metric-value text-xl sm:text-2xl font-bold text-foreground">{value}</span>
-                <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest">{label}</span>
+              { value: "10s", label: "Auto-Save Cycle", desc: "Real-time background persistence loop" },
+              { value: "100%", label: "RLS Coverage", desc: "PostgreSQL Row-Level security boundaries" },
+              { value: "<50ms", label: "Vector Search", desc: "High-dimensional cosine semantic retrieval" },
+              { value: "∞", label: "Version History", desc: "Verifiable cryptographic ledger log" },
+            ].map(({ value, label, desc }, idx) => (
+              <div key={label} className={`flex flex-col px-4 sm:px-6 md:px-8 text-left group transition-all duration-300`}>
+                <div className="flex items-baseline gap-2 mb-2">
+                  <span className="metric-value text-3xl sm:text-4xl font-light tracking-tight text-foreground transition-transform duration-300 group-hover:translate-x-1">
+                    {value}
+                  </span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-foreground pulse-dot opacity-60" />
+                </div>
+                <span className="text-[10px] font-mono font-bold tracking-widest text-foreground uppercase mb-1">
+                  {label}
+                </span>
+                <span className="text-xs text-muted-foreground leading-relaxed font-sans font-light">
+                  {desc}
+                </span>
               </div>
             ))}
           </div>
@@ -274,6 +284,25 @@ export default function HomePage() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+       {/* ── Full-bleed image break ── */}
+      <section className="reveal-section relative overflow-hidden" style={{ height: "420px" }}>
+        <img
+          src="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1600&auto=format&fit=crop&q=80"
+          alt="Modern city skyline at night representing global enterprise reach"
+          className="absolute inset-0 w-full h-full object-cover"
+          style={{ filter: "grayscale(100%) contrast(1.1) brightness(0.55)" }}
+        />
+          
+        {/* Overlay text */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-5 px-6 text-center z-10">
+          <p className="font-mono text-[10px] uppercase tracking-[0.35em] text-white/60">TRUSTED BY ENTERPRISES WORLDWIDE</p>
+          <h2 className="font-serif text-3xl sm:text-5xl text-white font-light tracking-tight max-w-2xl leading-tight">
+            Institutional knowledge, <br /><span className="italic">secured for the long term.</span>
+          </h2>
+          <div className="divider-fade w-48 opacity-30 mt-2" style={{ background: "linear-gradient(90deg, transparent 0%, white 40%, white 60%, transparent 100%)" }} />
+          <p className="text-white/50 text-xs font-mono uppercase tracking-widest">ENCRYPTED · IMMUTABLE · DECENTRALIZED</p>
         </div>
       </section>
 
