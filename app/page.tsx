@@ -79,7 +79,6 @@ export default function HomePage() {
 
       {/* ── Hero section ── */}
       <section className="grain-overlay relative overflow-hidden">
-        {/* Subtle grid background pattern */}
         <div
           className="absolute inset-0 z-0 opacity-[0.03]"
           style={{
@@ -117,29 +116,48 @@ export default function HomePage() {
               </div>
             </div>
 
+            {/* Hero image — box removed */}
             <div className="lg:col-span-6 animate-fade-in-scale stagger-3">
-              <div className="gradient-border-card border border-border p-3 bg-secondary/10 hover-premium-card">
-                <div className="relative aspect-[4/3] w-full overflow-hidden rounded border border-border bg-white">
-                  <Image
-                    src="/corporate_hero.png"
-                    alt="Publish secure network node interface illustration"
-                    fill
-                    className="object-cover transition-transform duration-700 hover:scale-[1.02]"
-                    priority
-                  />
-                </div>
-                <div className="mt-3 flex items-center justify-between text-[10px] font-mono text-muted-foreground uppercase px-1">
-                  <span className="flex items-center gap-1.5">
-                    <Cpu className="h-3 w-3" />
-                    SYSTEM SCHEMATIC 001
-                  </span>
-                  <span className="flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 pulse-dot" />
-                    INTEGRITY MATRIX ACTIVE
-                  </span>
-                </div>
+              <div className="relative aspect-[4/3] w-full">
+                <Image
+                  src="/Screenshot 2026-05-29 100145.png"
+                  alt="Publish secure network node interface illustration"
+                  width={800}
+                  height={600}
+                  className="w-full h-auto"
+                  priority
+                />
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Metrics / Trust Bar ── */}
+      <section className="border-y border-border bg-white reveal-section">
+        <div className="max-w-6xl mx-auto px-5 sm:px-8 py-12 sm:py-16">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-y-8 sm:gap-y-10 md:gap-y-0 divide-x-0 md:divide-x divide-border">
+            {[
+              { value: "10s", label: "Auto-Save Cycle", desc: "Real-time background persistence loop" },
+              { value: "100%", label: "RLS Coverage", desc: "PostgreSQL Row-Level security boundaries" },
+              { value: "<50ms", label: "Vector Search", desc: "High-dimensional cosine semantic retrieval" },
+              { value: "∞", label: "Version History", desc: "Verifiable cryptographic ledger log" },
+            ].map(({ value, label, desc }) => (
+              <div key={label} className="flex flex-col px-4 sm:px-6 md:px-8 text-left group transition-all duration-300">
+                <div className="flex items-baseline gap-2 mb-2">
+                  <span className="metric-value text-3xl sm:text-4xl font-light tracking-tight text-foreground transition-transform duration-300 group-hover:translate-x-1">
+                    {value}
+                  </span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-foreground pulse-dot opacity-60" />
+                </div>
+                <span className="text-[10px] font-mono font-bold tracking-widest text-foreground uppercase mb-1">
+                  {label}
+                </span>
+                <span className="text-xs text-muted-foreground leading-relaxed font-sans font-light">
+                  {desc}
+                </span>
+              </div>
+            ))}
           </div>
         </div>
       </section>
