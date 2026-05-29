@@ -114,7 +114,7 @@ export default function ProfilePage() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-white gap-3">
         <Loader2 className="h-6 w-6 animate-spin text-foreground" />
-        <p className="text-xs text-muted-foreground font-mono uppercase tracking-wider">Syncing Profile Node...</p>
+        <p className="text-xs text-muted-foreground font-mono uppercase tracking-widest">Syncing Profile Node...</p>
       </div>
     );
   }
@@ -122,11 +122,13 @@ export default function ProfilePage() {
   if (!user) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-white px-5 text-center">
-        <User className="h-10 w-10 text-muted-foreground/30 mb-4" />
+        <div className="w-16 h-16 rounded-2xl bg-secondary border border-border flex items-center justify-center mb-6">
+          <User className="h-7 w-7 text-muted-foreground/40" />
+        </div>
         <h2 className="font-serif text-2xl mb-2">Access Denied</h2>
         <p className="text-sm text-muted-foreground mb-6">You must be signed in to view your profile console.</p>
         <Link href="/login">
-          <Button size="sm">Sign In</Button>
+          <Button size="sm" className="btn-shimmer">Sign In</Button>
         </Link>
       </div>
     );
@@ -135,11 +137,11 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen bg-white text-foreground">
       {/* Header */}
-      <header className="border-b border-border bg-white sticky top-0 z-50">
-        <div className="max-w-5xl mx-auto px-5 sm:px-8 h-14 flex items-center justify-between">
+      <header className="header-glass sticky top-0 z-50">
+        <div className="max-w-6xl mx-auto px-5 sm:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link href="/dashboard">
-              <Button variant="ghost" size="sm" className="gap-1.5 text-xs text-muted-foreground hover:text-foreground">
+              <Button variant="ghost" size="sm" className="gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors">
                 <ArrowLeft className="h-3.5 w-3.5" /> Dashboard
               </Button>
             </Link>
@@ -155,39 +157,44 @@ export default function ProfilePage() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-5xl mx-auto px-5 sm:px-8 py-10">
+      <main className="max-w-6xl mx-auto px-5 sm:px-8 py-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
           {/* Profile Meta Editor */}
-          <div className="lg:col-span-4 space-y-6">
-            <Card className="p-6 border border-border bg-white rounded-lg space-y-6">
+          <div className="lg:col-span-4 space-y-6 animate-fade-in-up">
+            <Card className="p-6 border border-border bg-white rounded-xl space-y-6 hover-premium-card">
               <div className="flex items-center gap-3 pb-4 border-b border-border">
-                <div className="w-10 h-10 rounded bg-secondary flex items-center justify-center border border-border">
-                  <User className="h-5 w-5 text-foreground" />
+                <div className="w-12 h-12 rounded-xl bg-foreground flex items-center justify-center">
+                  <span className="text-lg font-serif text-primary-foreground font-medium">
+                    {(profile?.name || "U").charAt(0).toUpperCase()}
+                  </span>
                 </div>
                 <div>
                   <h2 className="font-medium text-foreground text-sm">Identity profile</h2>
-                  <p className="text-[10px] text-muted-foreground font-mono uppercase">VERIFIED PROFILE NODE</p>
+                  <p className="text-[10px] text-muted-foreground font-mono uppercase flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 pulse-dot" />
+                    VERIFIED PROFILE NODE
+                  </p>
                 </div>
               </div>
 
               {!editing ? (
-                <div className="space-y-4 text-xs font-mono">
-                  <div className="space-y-1">
-                    <span className="text-muted-foreground block text-[10px] uppercase">Display Name</span>
+                <div className="space-y-5 text-xs font-mono">
+                  <div className="space-y-1.5">
+                    <span className="text-muted-foreground block text-[10px] uppercase tracking-wider">Display Name</span>
                     <span className="text-sm font-sans font-medium block text-foreground">
                       {profile?.name || "Anonymous User"}
                     </span>
                   </div>
-                  <div className="space-y-1">
-                    <span className="text-muted-foreground block text-[10px] uppercase">Email Address</span>
+                  <div className="space-y-1.5">
+                    <span className="text-muted-foreground block text-[10px] uppercase tracking-wider">Email Address</span>
                     <span className="text-foreground block flex items-center gap-1.5 font-sans text-sm">
                       <Mail className="h-3.5 w-3.5" /> {profile?.email}
                     </span>
                   </div>
                   {profile?.created_at && (
-                    <div className="space-y-1">
-                      <span className="text-muted-foreground block text-[10px] uppercase">Node Registered</span>
+                    <div className="space-y-1.5">
+                      <span className="text-muted-foreground block text-[10px] uppercase tracking-wider">Node Registered</span>
                       <span className="text-foreground block flex items-center gap-1.5 font-sans text-sm">
                         <Calendar className="h-3.5 w-3.5" />
                         {new Date(profile.created_at).toLocaleDateString()}
@@ -198,20 +205,20 @@ export default function ProfilePage() {
                     size="sm"
                     variant="outline"
                     onClick={() => setEditing(true)}
-                    className="w-full text-xs h-8 gap-1.5 mt-2"
+                    className="w-full text-xs h-9 gap-1.5 mt-2 transition-all duration-200 hover:translate-y-[-1px]"
                   >
                     <Edit2 className="h-3 w-3" /> Edit Profile Details
                   </Button>
                 </div>
               ) : (
                 <form onSubmit={handleUpdateProfile} className="space-y-4">
-                  <div className="space-y-1.5">
-                    <label className="text-[10px] uppercase font-mono text-muted-foreground block">Display Name</label>
+                  <div className="space-y-2">
+                    <label className="text-[10px] uppercase font-mono text-muted-foreground block tracking-wider">Display Name</label>
                     <Input
                       type="text"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="h-9 bg-white border-border text-foreground text-sm"
+                      className="h-10 bg-white border-border text-foreground text-sm transition-all duration-200 focus:border-foreground/30"
                       placeholder="Enter name"
                       required
                     />
@@ -221,14 +228,14 @@ export default function ProfilePage() {
                       type="button"
                       variant="outline"
                       onClick={() => { setEditing(false); setName(profile?.name || ""); }}
-                      className="flex-1 text-xs h-8"
+                      className="flex-1 text-xs h-9"
                     >
                       Cancel
                     </Button>
                     <Button
                       type="submit"
                       disabled={saving}
-                      className="flex-1 text-xs h-8 gap-1"
+                      className="flex-1 text-xs h-9 gap-1 btn-shimmer"
                     >
                       {saving ? <Loader2 className="h-3 w-3 animate-spin" /> : <Check className="h-3 w-3" />}
                       Save
@@ -240,32 +247,34 @@ export default function ProfilePage() {
           </div>
 
           {/* Publications authored by this user */}
-          <div className="lg:col-span-8 space-y-6">
-            <div className="border border-border rounded-lg bg-white overflow-hidden">
+          <div className="lg:col-span-8 space-y-6 animate-fade-in-up stagger-2">
+            <div className="border border-border rounded-xl bg-white overflow-hidden">
               <div className="px-5 py-4 border-b border-border bg-secondary/30 flex items-center justify-between">
                 <h3 className="font-serif text-base text-foreground">Publications Authored</h3>
-                <span className="text-[10px] font-mono text-muted-foreground uppercase">
+                <span className="chip">
                   {publications.length} VERIFIED NODE{publications.length !== 1 ? "S" : ""}
                 </span>
               </div>
 
               {publications.length === 0 ? (
-                <div className="p-12 text-center space-y-3">
-                  <FileText className="h-8 w-8 text-muted-foreground/30 mx-auto" />
+                <div className="p-14 text-center space-y-3">
+                  <div className="w-14 h-14 rounded-2xl bg-secondary border border-border flex items-center justify-center mx-auto">
+                    <FileText className="h-6 w-6 text-muted-foreground/30" />
+                  </div>
                   <p className="text-sm text-foreground">No published documents</p>
                   <p className="text-xs text-muted-foreground">Draft and publish your first article from the editor</p>
                 </div>
               ) : (
                 <div className="divide-y divide-border">
                   {publications.map((pub) => (
-                    <div key={pub.id} className="p-5 hover:bg-secondary/20 transition-colors flex flex-col gap-2">
+                    <div key={pub.id} className="p-5 row-hover-lift flex flex-col gap-2.5 cursor-default">
                       <div className="flex items-center gap-2">
                         {pub.topic && (
-                          <span className="text-[9px] font-mono text-muted-foreground border border-border px-1.5 py-0.5 rounded uppercase">
+                          <span className="chip">
                             {pub.topic}
                           </span>
                         )}
-                        <span className="text-[9px] font-mono text-muted-foreground">
+                        <span className="chip bg-secondary">
                           NODE: {pub.id.substring(0, 8)}...
                         </span>
                       </div>
@@ -289,7 +298,7 @@ export default function ProfilePage() {
 
       {/* Footer */}
       <footer className="border-t border-border mt-20">
-        <div className="max-w-5xl mx-auto px-5 sm:px-8 py-8 text-xs text-muted-foreground font-mono">
+        <div className="max-w-6xl mx-auto px-5 sm:px-8 py-8 text-xs text-muted-foreground font-mono">
           Publish Profile Configuration Node · © 2026
         </div>
       </footer>

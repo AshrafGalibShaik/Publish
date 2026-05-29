@@ -57,12 +57,14 @@ export function DraftList({ onSelectDraft, refreshTrigger }: DraftListProps) {
 
   if (drafts.length === 0) {
     return (
-      <div className="border border-border rounded-lg p-10 sm:p-14 text-center">
-        <FileText className="h-8 w-8 text-muted-foreground/30 mx-auto mb-4" strokeWidth={1.5} />
-        <p className="text-sm text-foreground mb-1">No drafts yet</p>
-        <p className="text-xs text-muted-foreground mb-6">Start writing your first article</p>
+      <div className="border border-border rounded-xl p-12 sm:p-16 text-center">
+        <div className="w-14 h-14 rounded-2xl bg-secondary border border-border flex items-center justify-center mx-auto mb-5">
+          <FileText className="h-6 w-6 text-muted-foreground/30" strokeWidth={1.5} />
+        </div>
+        <p className="text-sm text-foreground mb-1.5 font-medium">No drafts yet</p>
+        <p className="text-xs text-muted-foreground mb-7">Start writing your first article</p>
         <Link href="/editor">
-          <Button size="sm" className="text-sm gap-1.5 h-8"><Plus className="h-3.5 w-3.5" /> New article</Button>
+          <Button size="sm" className="text-sm gap-1.5 h-9 btn-shimmer"><Plus className="h-3.5 w-3.5" /> New article</Button>
         </Link>
       </div>
     );
@@ -70,30 +72,30 @@ export function DraftList({ onSelectDraft, refreshTrigger }: DraftListProps) {
 
   return (
     <div className="space-y-1">
-      <p className="text-xs text-muted-foreground mb-4">{drafts.length} draft{drafts.length !== 1 ? "s" : ""}</p>
+      <p className="text-xs text-muted-foreground mb-4 font-mono">{drafts.length} draft{drafts.length !== 1 ? "s" : ""}</p>
 
-      <div className="border border-border rounded-lg divide-y divide-border overflow-hidden">
+      <div className="border border-border rounded-xl divide-y divide-border overflow-hidden">
         {drafts.map((draft) => (
-          <div key={draft.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 sm:p-5 hover:bg-secondary/30 transition-colors">
+          <div key={draft.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 sm:p-5 row-hover-lift">
             <div className="flex-1 min-w-0 cursor-pointer" onClick={() => onSelectDraft?.(draft)}>
               <h3 className="font-medium text-foreground text-sm truncate">
                 {draft.title || "Untitled draft"}
               </h3>
-              <p className="text-xs text-muted-foreground line-clamp-1 mt-1">
+              <p className="text-xs text-muted-foreground line-clamp-1 mt-1.5">
                 {draft.content_text || "No content"}
               </p>
-              <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground mt-2">
+              <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground mt-2 font-mono">
                 <Clock className="h-3 w-3" />
                 {formatDistanceToNow(new Date(draft.updated_at), { addSuffix: true })}
               </div>
             </div>
             <div className="flex items-center gap-1.5 shrink-0">
               <Link href={`/editor?draft=${draft.id}`}>
-                <Button size="sm" variant="ghost" className="text-xs h-7 gap-1 text-muted-foreground hover:text-foreground">
+                <Button size="sm" variant="ghost" className="text-xs h-8 gap-1.5 text-muted-foreground hover:text-foreground transition-colors">
                   <Edit3 className="h-3 w-3" /> Edit
                 </Button>
               </Link>
-              <Button size="sm" variant="ghost" onClick={() => handleDelete(draft.id)} className="text-xs h-7 gap-1 text-muted-foreground hover:text-foreground">
+              <Button size="sm" variant="ghost" onClick={() => handleDelete(draft.id)} className="text-xs h-8 gap-1.5 text-muted-foreground hover:text-foreground transition-colors">
                 <Trash2 className="h-3 w-3" /> Delete
               </Button>
             </div>

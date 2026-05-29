@@ -74,11 +74,11 @@ export default function PublicationsPage() {
   return (
     <div className="min-h-screen bg-white text-foreground">
       {/* Header */}
-      <header className="border-b border-border bg-white sticky top-0 z-50">
-        <div className="max-w-5xl mx-auto px-5 sm:px-8 h-14 flex items-center justify-between">
+      <header className="header-glass sticky top-0 z-50">
+        <div className="max-w-6xl mx-auto px-5 sm:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link href="/dashboard">
-              <Button variant="ghost" size="sm" className="gap-1.5 text-xs text-muted-foreground hover:text-foreground">
+              <Button variant="ghost" size="sm" className="gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors">
                 <ArrowLeft className="h-3.5 w-3.5" /> Dashboard
               </Button>
             </Link>
@@ -86,7 +86,7 @@ export default function PublicationsPage() {
           </div>
 
           <Link href="/">
-            <span className="text-xs text-muted-foreground hover:text-foreground transition-colors uppercase tracking-wider">
+            <span className="text-xs text-muted-foreground hover:text-foreground transition-colors uppercase tracking-wider font-mono">
               System Home
             </span>
           </Link>
@@ -94,15 +94,17 @@ export default function PublicationsPage() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-5xl mx-auto px-5 sm:px-8 py-10">
-        <div className="mb-10 space-y-3">
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-secondary text-foreground border border-border text-xs font-mono uppercase tracking-wider">
-            <ShieldCheck className="h-3.5 w-3.5" /> Cryptographic Integrity Active
+      <main className="max-w-6xl mx-auto px-5 sm:px-8 py-10">
+        <div className="mb-10 space-y-4 animate-fade-in-up">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-secondary text-foreground border border-border text-[10px] font-mono uppercase tracking-widest">
+            <ShieldCheck className="h-3.5 w-3.5" />
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 pulse-dot" />
+            Cryptographic Integrity Active
           </div>
           <h1 className="font-serif text-3xl sm:text-4xl tracking-tight text-foreground">
             Verifiable Publications Ledger
           </h1>
-          <p className="text-sm text-muted-foreground max-w-xl">
+          <p className="text-sm text-muted-foreground max-w-xl leading-relaxed">
             This immutable ledger contains public records of all documents published through our vector-embedded network nodes. Verify authorship, system timestamps, and node addresses.
           </p>
         </div>
@@ -114,41 +116,47 @@ export default function PublicationsPage() {
             placeholder="Search registry by title, author name, or node ID..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 h-10 bg-white border-border text-foreground placeholder:text-muted-foreground/50 text-sm"
+            className="pl-10 h-11 bg-white border-border text-foreground placeholder:text-muted-foreground/40 text-sm transition-all duration-200 focus:border-foreground/30"
           />
         </div>
 
         {loading ? (
-          <div className="flex flex-col items-center justify-center py-20 gap-3">
+          <div className="flex flex-col items-center justify-center py-24 gap-3">
             <Loader2 className="h-6 w-6 animate-spin text-foreground" />
-            <p className="text-xs text-muted-foreground font-mono uppercase">Scanning registry nodes...</p>
+            <p className="text-xs text-muted-foreground font-mono uppercase tracking-widest">Scanning registry nodes...</p>
           </div>
         ) : filteredPublications.length === 0 ? (
-          <Card className="p-12 text-center bg-white border border-border rounded-lg">
-            <p className="text-sm text-muted-foreground font-mono">No publications match your registry search query.</p>
+          <Card className="p-14 text-center bg-white border border-border rounded-xl">
+            <Search className="h-8 w-8 text-muted-foreground/20 mx-auto mb-4" />
+            <p className="text-sm text-foreground mb-1">No publications found</p>
+            <p className="text-xs text-muted-foreground font-mono">No publications match your registry search query.</p>
           </Card>
         ) : (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between text-xs text-muted-foreground font-mono uppercase tracking-wider border-b border-border pb-2 px-1">
+          <div className="space-y-5">
+            <div className="flex items-center justify-between text-xs text-muted-foreground font-mono uppercase tracking-wider border-b border-border pb-3 px-1">
               <span>Verified Nodes ({filteredPublications.length})</span>
-              <span>Integrity Status: Secure</span>
+              <span className="flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 pulse-dot" />
+                Integrity Status: Secure
+              </span>
             </div>
 
             <div className="space-y-4">
-              {filteredPublications.map((pub) => (
+              {filteredPublications.map((pub, i) => (
                 <Card
                   key={pub.id}
-                  className="p-5 sm:p-6 bg-white border border-border rounded-lg hover:border-foreground/30 transition-all duration-200"
+                  className="p-5 sm:p-6 bg-white border border-border rounded-xl hover-premium-card"
+                  style={{ animationDelay: `${i * 0.05}s` }}
                 >
                   <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
                     <div className="space-y-3 flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         {pub.topic && (
-                          <span className="text-[10px] uppercase tracking-wider text-muted-foreground border border-border px-2 py-0.5 rounded">
+                          <span className="chip">
                             {pub.topic}
                           </span>
                         )}
-                        <span className="text-[10px] font-mono text-muted-foreground bg-secondary px-2 py-0.5 rounded uppercase">
+                        <span className="chip bg-secondary">
                           NODE ID: {pub.id.substring(0, 18)}...
                         </span>
                       </div>
@@ -177,7 +185,7 @@ export default function PublicationsPage() {
 
                     <div className="flex items-center gap-2 shrink-0 self-end md:self-start">
                       <Link href={`/content/${pub.slug}`} target="_blank">
-                        <Button size="sm" variant="outline" className="text-xs h-8 gap-1.5 border-border text-foreground hover:bg-secondary">
+                        <Button size="sm" variant="outline" className="text-xs h-9 gap-1.5 border-border text-foreground hover:bg-secondary transition-all duration-200 hover:translate-y-[-1px]">
                           View Node <ExternalLink className="h-3 w-3" />
                         </Button>
                       </Link>
@@ -192,7 +200,7 @@ export default function PublicationsPage() {
 
       {/* Footer */}
       <footer className="border-t border-border mt-20">
-        <div className="max-w-5xl mx-auto px-5 sm:px-8 py-8 text-xs text-muted-foreground font-mono flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="max-w-6xl mx-auto px-5 sm:px-8 py-8 text-xs text-muted-foreground font-mono flex flex-col sm:flex-row items-center justify-between gap-4">
           <span>Publish Cryptographic Integrity ledger</span>
           <span>© 2026 Publish</span>
         </div>

@@ -2,23 +2,50 @@
 
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { ArrowRight, FileText, GitBranch, Search, Sparkles, Shield, Zap, Globe, CheckCircle, Loader2 } from "lucide-react";
+import { ArrowRight, FileText, GitBranch, Search, Sparkles, Shield, Zap, Globe, CheckCircle, Loader2, ArrowUpRight, Cpu } from "lucide-react";
 import Image from "next/image";
 import { useAuth } from "@/hooks/useAuth";
+import { useEffect, useRef } from "react";
 
 export default function HomePage() {
   const { user, loading, signOut } = useAuth();
+  const sectionsRef = useRef<HTMLDivElement[]>([]);
+
+  // Intersection observer for scroll-triggered reveals
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("revealed");
+          }
+        });
+      },
+      { threshold: 0.08, rootMargin: "0px 0px -40px 0px" }
+    );
+
+    document.querySelectorAll(".reveal-section").forEach((el) => {
+      observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <div className="min-h-screen bg-white text-foreground animate-fade-in">
+    <div className="min-h-screen bg-white text-foreground">
       {/* ── Header ── */}
-      <header className="border-b border-border bg-white sticky top-0 z-50 transition-all duration-200">
-        <div className="max-w-5xl mx-auto px-5 sm:px-8 h-14 flex items-center justify-between">
-          <Link href="/" className="font-serif text-xl tracking-tight text-foreground flex items-center gap-2 group">
+      <header className="header-glass sticky top-0 z-50 transition-all duration-300">
+        <div className="max-w-6xl mx-auto px-5 sm:px-8 h-16 flex items-center justify-between">
+          <Link href="/" className="font-serif text-xl tracking-tight text-foreground flex items-center gap-2.5 group">
+            <img
+              src="/Screenshot 2026-05-29 092754.png"
+              alt="Publish Logo"
+              className="h-8 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+            />
             <span className="font-bold">PUBLISH</span>
-            <span className="text-xs uppercase tracking-[0.25em] text-muted-foreground border-l border-border pl-2 font-sans font-medium transition-all group-hover:text-foreground">Enterprise</span>
+            <span className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground border-l border-border pl-2.5 font-sans font-medium transition-all group-hover:text-foreground hidden sm:inline">Enterprise</span>
           </Link>
-          <nav className="flex items-center gap-2">
+          <nav className="flex items-center gap-1">
             <Link href="/publications" className="nav-link-underline mx-2">
               <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors py-1">Registry</span>
             </Link>
@@ -40,8 +67,8 @@ export default function HomePage() {
                   <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors py-1">Sign In</span>
                 </Link>
                 <Link href="/signup">
-                  <Button size="sm" className="text-xs uppercase tracking-wider h-8 transition-transform hover:scale-105 active:scale-95 duration-200">
-                    Get Started
+                  <Button size="sm" className="text-xs uppercase tracking-wider h-9 px-5 btn-shimmer transition-all duration-300 hover:shadow-[0_8px_30px_-6px_rgba(0,0,0,0.2)] hover:translate-y-[-1px] active:scale-[0.98]">
+                    Get Started <ArrowRight className="ml-1.5 h-3 w-3" />
                   </Button>
                 </Link>
               </>
@@ -51,138 +78,198 @@ export default function HomePage() {
       </header>
 
       {/* ── Hero section ── */}
-      <section className="max-w-5xl mx-auto px-5 sm:px-8 pt-20 sm:pt-28 pb-16">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          <div className="lg:col-span-6 space-y-6">
-            <p className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground font-bold font-mono">
-              SECURE DECENTRALIZED DATA FABRIC
-            </p>
-            <h1 className="font-serif text-[2.75rem] sm:text-[3.75rem] leading-[1.05] tracking-tight text-foreground font-light">
-              Corporate publishing <br />
-              <span className="italic">reimagined.</span>
-            </h1>
-            <p className="text-base text-muted-foreground leading-relaxed max-w-lg">
-              Publish is the premier workspace built for corporate teams to draft, index, and securely search institutional intelligence using custom AI semantic vectors.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 pt-2">
-              <Link href="/dashboard">
-                <Button size="lg" className="w-full sm:w-auto h-11 px-7 text-xs uppercase tracking-wider transition-all duration-200 hover:shadow-lg hover:translate-y-[-1px]">
-                  Open Console <ArrowRight className="ml-2 h-3.5 w-3.5" />
-                </Button>
-              </Link>
-              <Link href="/publications">
-                <Button size="lg" variant="outline" className="w-full sm:w-auto h-11 px-7 text-xs uppercase tracking-wider border-border text-foreground hover:bg-secondary transition-all duration-200 hover:translate-y-[-1px]">
-                  Explore Ledger
-                </Button>
-              </Link>
-            </div>
-          </div>
-
-          <div className="lg:col-span-6 animate-float">
-            <div className="border border-border p-3 rounded-lg bg-secondary/10 hover-premium-card">
-              <div className="relative aspect-[4/3] w-full overflow-hidden rounded border border-border bg-white">
-                <Image
-                  src="/corporate_hero.png"
-                  alt="Publish secure network node interface illustration"
-                  fill
-                  className="object-cover"
-                  priority
-                />
+      <section className="grain-overlay relative overflow-hidden">
+        {/* Subtle grid background pattern */}
+        <div
+          className="absolute inset-0 z-0 opacity-[0.03]"
+          style={{
+            backgroundImage: `linear-gradient(oklch(0.09 0 0) 1px, transparent 1px), linear-gradient(90deg, oklch(0.09 0 0) 1px, transparent 1px)`,
+            backgroundSize: '64px 64px',
+          }}
+        />
+        <div className="max-w-6xl mx-auto px-5 sm:px-8 pt-20 sm:pt-32 pb-20 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+            <div className="lg:col-span-6 space-y-7">
+              <div className="animate-fade-in-up stagger-1">
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-secondary border border-border text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-mono font-bold">
+                  <span className="w-1.5 h-1.5 rounded-full bg-foreground pulse-dot" />
+                  SECURE DECENTRALIZED DATA FABRIC
+                </div>
               </div>
-              <div className="mt-3 flex items-center justify-between text-[10px] font-mono text-muted-foreground uppercase px-1">
-                <span>SYSTEM SCHEMATIC 001</span>
-                <span>INTEGRITY MATRIX ACTIVE</span>
+              <h1 className="font-serif text-[2.75rem] sm:text-[4rem] leading-[1.02] tracking-[-0.02em] text-foreground font-light animate-fade-in-up stagger-2">
+                Corporate publishing <br />
+                <span className="italic">reimagined.</span>
+              </h1>
+              <p className="text-base sm:text-lg text-muted-foreground leading-relaxed max-w-lg animate-fade-in-up stagger-3">
+                Publish is the premier workspace built for corporate teams to draft, index, and securely search institutional intelligence using custom AI semantic vectors.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 pt-1 animate-fade-in-up stagger-4">
+                <Link href="/dashboard">
+                  <Button size="lg" className="w-full sm:w-auto h-12 px-8 text-xs uppercase tracking-wider btn-shimmer transition-all duration-300 hover:shadow-[0_12px_40px_-8px_rgba(0,0,0,0.25)] hover:translate-y-[-2px] active:scale-[0.98]">
+                    Open Console <ArrowRight className="ml-2 h-3.5 w-3.5" />
+                  </Button>
+                </Link>
+                <Link href="/publications">
+                  <Button size="lg" variant="outline" className="w-full sm:w-auto h-12 px-8 text-xs uppercase tracking-wider border-border text-foreground hover:bg-secondary transition-all duration-300 hover:translate-y-[-2px] group">
+                    Explore Ledger <ArrowUpRight className="ml-2 h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                  </Button>
+                </Link>
+              </div>
+            </div>
+
+            <div className="lg:col-span-6 animate-fade-in-scale stagger-3">
+              <div className="gradient-border-card border border-border p-3 bg-secondary/10 hover-premium-card">
+                <div className="relative aspect-[4/3] w-full overflow-hidden rounded border border-border bg-white">
+                  <Image
+                    src="/corporate_hero.png"
+                    alt="Publish secure network node interface illustration"
+                    fill
+                    className="object-cover transition-transform duration-700 hover:scale-[1.02]"
+                    priority
+                  />
+                </div>
+                <div className="mt-3 flex items-center justify-between text-[10px] font-mono text-muted-foreground uppercase px-1">
+                  <span className="flex items-center gap-1.5">
+                    <Cpu className="h-3 w-3" />
+                    SYSTEM SCHEMATIC 001
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 pulse-dot" />
+                    INTEGRITY MATRIX ACTIVE
+                  </span>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── Client / Trust Bar ── */}
-      <section className="border-y border-border bg-secondary/20">
-        <div className="max-w-5xl mx-auto px-5 sm:px-8 py-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 text-[10px] font-mono text-muted-foreground uppercase tracking-widest">
-          <span>OPERATING PRINCIPLES</span>
+      {/* ── Metrics / Trust Bar ── */}
+      <section className="border-y border-border bg-secondary/30 reveal-section">
+        <div className="max-w-6xl mx-auto px-5 sm:px-8 py-0">
+          <div className="stats-grid">
+            {[
+              { value: "10s", label: "Auto-Save Cycle" },
+              { value: "100%", label: "RLS Coverage" },
+              { value: "<50ms", label: "Vector Search" },
+              { value: "∞", label: "Version History" },
+            ].map(({ value, label }) => (
+              <div key={label} className="flex flex-col items-center justify-center gap-1 py-5 sm:py-7">
+                <span className="metric-value text-xl sm:text-2xl font-bold text-foreground">{value}</span>
+                <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest">{label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Operating Principles Bar ── */}
+      <section className="border-b border-border bg-white">
+        <div className="max-w-6xl mx-auto px-5 sm:px-8 py-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-[10px] font-mono text-muted-foreground uppercase tracking-widest">
+          <span className="text-foreground font-semibold">OPERATING PRINCIPLES</span>
           <div className="flex flex-wrap gap-x-8 gap-y-2">
-            <span>IMMUTABLE HISTORY</span>
-            <span>COSINE SIMILARITY</span>
-            <span>DECISION INTELLIGENCE</span>
-            <span>ENTERPRISE RLS</span>
+            {["IMMUTABLE HISTORY", "COSINE SIMILARITY", "DECISION INTELLIGENCE", "ENTERPRISE RLS"].map((text) => (
+              <span key={text} className="flex items-center gap-1.5 transition-colors hover:text-foreground cursor-default">
+                <span className="w-1 h-1 rounded-full bg-muted-foreground/40" />
+                {text}
+              </span>
+            ))}
           </div>
         </div>
       </section>
 
       {/* ── Corporate Details / Product Value ── */}
-      <section className="max-w-5xl mx-auto px-5 sm:px-8 py-20 sm:py-28">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
-          <div className="lg:col-span-6 order-last lg:order-first">
-            <div className="border border-border p-3 rounded-lg bg-secondary/10 hover-premium-card">
-              <div className="relative aspect-[4/3] w-full overflow-hidden rounded border border-border bg-white">
-                <Image
-                  src="/corporate_features.png"
-                  alt="High-density network visualization graphic"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <div className="mt-3 flex items-center justify-between text-[10px] font-mono text-muted-foreground uppercase px-1">
-                <span>DECISION GRAPH 002</span>
-                <span>STABILITY INDEX: 100%</span>
+      <section className="reveal-section">
+        <div className="max-w-6xl mx-auto px-5 sm:px-8 py-24 sm:py-32">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+            <div className="lg:col-span-6 order-last lg:order-first">
+              <div className="gradient-border-card border border-border p-3 bg-secondary/10 hover-premium-card">
+                <div className="relative aspect-[4/3] w-full overflow-hidden rounded border border-border bg-white">
+                  <Image
+                    src="/corporate_features.png"
+                    alt="High-density network visualization graphic"
+                    fill
+                    className="object-cover transition-transform duration-700 hover:scale-[1.02]"
+                  />
+                </div>
+                <div className="mt-3 flex items-center justify-between text-[10px] font-mono text-muted-foreground uppercase px-1">
+                  <span className="flex items-center gap-1.5">
+                    <Cpu className="h-3 w-3" />
+                    DECISION GRAPH 002
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 pulse-dot" />
+                    STABILITY INDEX: 100%
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className="lg:col-span-6 space-y-6">
-            <p className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground font-bold font-mono">
-              SYSTEM ARCHITECTURE
-            </p>
-            <h2 className="font-serif text-2xl sm:text-3xl text-foreground font-light">
-              Built for institutional precision.
-            </h2>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              Engineered to support modern knowledge management workflows, Publish leverages decentralized vector pipelines to ensure your teams can retrieve relevant documents based on semantic context, intent, and relationships rather than simple keywords.
-            </p>
+            <div className="lg:col-span-6 space-y-6">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-secondary border border-border text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-mono font-bold">
+                <Sparkles className="h-3 w-3" />
+                SYSTEM ARCHITECTURE
+              </div>
+              <h2 className="font-serif text-3xl sm:text-4xl text-foreground font-light tracking-tight">
+                Built for institutional precision.
+              </h2>
+              <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
+                Engineered to support modern knowledge management workflows, Publish leverages decentralized vector pipelines to ensure your teams can retrieve relevant documents based on semantic context, intent, and relationships rather than simple keywords.
+              </p>
 
-            <div className="space-y-4 pt-2 font-mono text-xs">
-              {[
-                "10-Second Automatic Draft Persistence",
-                "Full Cryptographic Version Snapshot Log",
-                "Built-in RLS Security Policies via PostgreSQL",
-                "Groq qwen-2.5-32b Intelligent Drafting Co-pilot"
-              ].map((text) => (
-                <div key={text} className="flex items-center gap-2 transition-transform hover:translate-x-1 duration-200">
-                  <CheckCircle className="h-4 w-4 text-foreground" strokeWidth={2} />
-                  <span>{text}</span>
-                </div>
-              ))}
+              <div className="space-y-4 pt-3">
+                {[
+                  "10-Second Automatic Draft Persistence",
+                  "Full Cryptographic Version Snapshot Log",
+                  "Built-in RLS Security Policies via PostgreSQL",
+                  "Groq qwen-2.5-32b Intelligent Drafting Co-pilot"
+                ].map((text, i) => (
+                  <div key={text} className="flex items-center gap-3 group cursor-default transition-all duration-300 hover:translate-x-1">
+                    <div className="w-6 h-6 rounded bg-foreground flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-110">
+                      <CheckCircle className="h-3.5 w-3.5 text-primary-foreground" strokeWidth={2} />
+                    </div>
+                    <span className="text-sm text-foreground font-medium">{text}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* ── Features Matrix ── */}
-      <section className="border-t border-border bg-secondary/10">
-        <div className="max-w-5xl mx-auto px-5 sm:px-8 py-20 sm:py-28">
-          <p className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground font-bold font-mono mb-2">
-            INTEGRATED CAPABILITIES
-          </p>
-          <h2 className="font-serif text-2xl sm:text-3xl text-foreground font-light mb-12">
-            The Knowledge Fabric Suite
-          </h2>
+      <section className="border-t border-border bg-secondary/10 grain-overlay reveal-section">
+        <div className="max-w-6xl mx-auto px-5 sm:px-8 py-24 sm:py-32 relative z-10">
+          <div className="text-center max-w-2xl mx-auto mb-14 space-y-3">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-border text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-mono font-bold mx-auto">
+              <Zap className="h-3 w-3" />
+              INTEGRATED CAPABILITIES
+            </div>
+            <h2 className="font-serif text-3xl sm:text-4xl text-foreground font-light tracking-tight">
+              The Knowledge Fabric Suite
+            </h2>
+            <p className="text-sm text-muted-foreground leading-relaxed max-w-lg mx-auto">
+              Every tool your organization needs to draft, publish, version, and retrieve institutional knowledge with enterprise-grade security.
+            </p>
+          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-border rounded-lg overflow-hidden border border-border">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-border rounded-xl overflow-hidden border border-border">
             {[
-              { icon: FileText, title: "Draft Persistence", desc: "Our active background loop stores work-in-progress content every 10 seconds securely." },
-              { icon: GitBranch, title: "Immutable Snapshot Logs", desc: "Every publish instantiates a verifiable static branch. Restore previous edits at any coordinate." },
-              { icon: Search, title: "Semantic Matrix Search", desc: "Find documents using high-dimensional cosine similarity vectors instead of archaic keywords." },
-              { icon: Sparkles, title: "Cognitive Drafting Suite", desc: "Use advanced LLM co-piloting to auto-generate tag schemas, brief outlines, and abstracts." },
-              { icon: Shield, title: "Row-Level RLS Boundaries", desc: "PostgreSQL row-level isolation policies guarantee absolute data boundaries for all tenant channels." },
-              { icon: Zap, title: "High-Frequency Indexing", desc: "Published nodes are vectorized and immediately integrated into the global catalog in real-time." },
-            ].map(({ icon: Icon, title, desc }) => (
-              <div key={title} className="bg-white p-6 sm:p-8 space-y-3 hover-premium-card cursor-default">
-                <div className="w-8 h-8 rounded bg-secondary flex items-center justify-center transition-transform duration-300 hover:rotate-12">
-                  <Icon className="h-4 w-4 text-foreground" strokeWidth={1.5} />
+              { icon: FileText, title: "Draft Persistence", desc: "Our active background loop stores work-in-progress content every 10 seconds securely.", tag: "AUTO-SAVE" },
+              { icon: GitBranch, title: "Immutable Snapshot Logs", desc: "Every publish instantiates a verifiable static branch. Restore previous edits at any coordinate.", tag: "VERSIONING" },
+              { icon: Search, title: "Semantic Matrix Search", desc: "Find documents using high-dimensional cosine similarity vectors instead of archaic keywords.", tag: "AI-POWERED" },
+              { icon: Sparkles, title: "Cognitive Drafting Suite", desc: "Use advanced LLM co-piloting to auto-generate tag schemas, brief outlines, and abstracts.", tag: "LLM" },
+              { icon: Shield, title: "Row-Level RLS Boundaries", desc: "PostgreSQL row-level isolation policies guarantee absolute data boundaries for all tenant channels.", tag: "SECURITY" },
+              { icon: Zap, title: "High-Frequency Indexing", desc: "Published nodes are vectorized and immediately integrated into the global catalog in real-time.", tag: "REAL-TIME" },
+            ].map(({ icon: Icon, title, desc, tag }) => (
+              <div key={title} className="bg-white p-7 sm:p-9 space-y-4 hover-premium-card cursor-default group">
+                <div className="flex items-center justify-between">
+                  <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center icon-ring transition-all duration-300 group-hover:bg-foreground">
+                    <Icon className="h-4.5 w-4.5 text-foreground transition-colors duration-300 group-hover:text-primary-foreground" strokeWidth={1.5} />
+                  </div>
+                  <span className="chip">{tag}</span>
                 </div>
-                <h3 className="font-medium text-foreground text-sm">{title}</h3>
+                <h3 className="font-medium text-foreground text-[15px] tracking-tight">{title}</h3>
                 <p className="text-xs text-muted-foreground leading-relaxed">{desc}</p>
               </div>
             ))}
@@ -191,18 +278,22 @@ export default function HomePage() {
       </section>
 
       {/* ── Verification Banner ── */}
-      <section className="border-t border-border">
-        <div className="max-w-5xl mx-auto px-5 sm:px-8 py-20 sm:py-24 text-center space-y-6 animate-fade-in">
-          <Globe className="h-8 w-8 text-foreground mx-auto" strokeWidth={1.5} />
-          <h2 className="font-serif text-3xl text-foreground font-light">
+      <section className="border-t border-border relative overflow-hidden reveal-section">
+        {/* Radial gradient background */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,oklch(0.96_0_0)_0%,transparent_70%)]" />
+        <div className="max-w-6xl mx-auto px-5 sm:px-8 py-24 sm:py-32 text-center space-y-7 relative z-10">
+          <div className="w-16 h-16 rounded-2xl bg-secondary border border-border flex items-center justify-center mx-auto transition-transform duration-500 hover:rotate-12">
+            <Globe className="h-7 w-7 text-foreground" strokeWidth={1.5} />
+          </div>
+          <h2 className="font-serif text-3xl sm:text-4xl text-foreground font-light tracking-tight max-w-lg mx-auto">
             Verify any publication in real-time.
           </h2>
-          <p className="text-sm text-muted-foreground max-w-md mx-auto leading-relaxed">
+          <p className="text-sm sm:text-base text-muted-foreground max-w-md mx-auto leading-relaxed">
             Our public ledgers are publicly auditable. Search the entire decentralized corporate catalog with comprehensive authorship trace elements.
           </p>
           <Link href="/publications">
-            <Button size="lg" className="h-11 px-8 text-xs uppercase tracking-wider transition-all duration-200 hover:shadow-lg hover:translate-y-[-1px]">
-              Verify Publications Ledger
+            <Button size="lg" className="h-12 px-10 text-xs uppercase tracking-wider btn-shimmer transition-all duration-300 hover:shadow-[0_12px_40px_-8px_rgba(0,0,0,0.25)] hover:translate-y-[-2px] active:scale-[0.98]">
+              Verify Publications Ledger <ArrowRight className="ml-2 h-3.5 w-3.5" />
             </Button>
           </Link>
         </div>
@@ -210,9 +301,25 @@ export default function HomePage() {
 
       {/* ── Footer ── */}
       <footer className="border-t border-border bg-secondary/10">
-        <div className="max-w-5xl mx-auto px-5 sm:px-8 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-[10px] font-mono text-muted-foreground uppercase">
-          <span className="font-serif text-sm text-foreground lowercase">publish.corp</span>
-          <span>© 2026 PUBLISH SYSTEM INC. ALL RIGHTS RESERVED.</span>
+        <div className="max-w-6xl mx-auto px-5 sm:px-8 py-10">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
+            <div className="flex items-center gap-3">
+              <div className="w-6 h-6 rounded bg-foreground flex items-center justify-center">
+                <span className="text-[9px] font-mono font-bold text-primary-foreground">P</span>
+              </div>
+              <span className="font-serif text-sm text-foreground">publish.corp</span>
+            </div>
+            <div className="flex items-center gap-8 text-[10px] font-mono text-muted-foreground uppercase tracking-widest">
+              <Link href="/publications" className="hover:text-foreground transition-colors">Registry</Link>
+              <Link href="/dashboard" className="hover:text-foreground transition-colors">Console</Link>
+              <Link href="/login" className="hover:text-foreground transition-colors">Access</Link>
+            </div>
+            <span className="text-[10px] font-mono text-muted-foreground uppercase">© 2026 PUBLISH SYSTEM INC.</span>
+          </div>
+          <div className="divider-fade mt-8 mb-4" />
+          <p className="text-center text-[10px] font-mono text-muted-foreground/60 uppercase tracking-wider">
+            ENCRYPTED · IMMUTABLE · DECENTRALIZED
+          </p>
         </div>
       </footer>
     </div>
