@@ -138,19 +138,21 @@ export default function ProfilePage() {
     <div className="min-h-screen bg-white text-foreground">
       {/* Header */}
       <header className="header-glass sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-5 sm:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Link href="/dashboard">
-              <Button variant="ghost" size="sm" className="gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors">
+        <div className="max-w-6xl mx-auto px-5 sm:px-8 h-16 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-2 sm:gap-4 min-w-0">
+            <Link href="/dashboard" className="flex-shrink-0">
+              <Button variant="ghost" size="sm" className="gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors px-2">
                 <ArrowLeft className="h-3.5 w-3.5" /> Dashboard
               </Button>
             </Link>
-            <span className="font-serif text-lg border-l border-border pl-4">User Settings</span>
+            <span className="font-serif text-sm sm:text-lg border-l border-border pl-3 sm:pl-4 truncate font-medium">
+              User Settings
+            </span>
           </div>
 
-          <Link href="/">
-            <span className="text-xs text-muted-foreground hover:text-foreground transition-colors uppercase tracking-wider font-mono">
-              System Home
+          <Link href="/" className="flex-shrink-0">
+            <span className="text-[10px] sm:text-xs text-muted-foreground hover:text-foreground transition-colors uppercase tracking-wider font-mono">
+              Home
             </span>
           </Link>
         </div>

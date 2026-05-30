@@ -233,7 +233,7 @@ export function ContentEditor({ draft, content, onSave, onPublish }: ContentEdit
 
       {/* ── AI Sidebar ── */}
       <div className="lg:col-span-1">
-        <div className="border border-border rounded-lg p-5 sm:p-6 sticky top-20 space-y-5">
+        <div className="border border-border rounded-lg p-5 sm:p-6 lg:sticky lg:top-20 space-y-5">
           <div className="flex items-center gap-2.5 pb-4 border-b border-border">
             <Sparkles className="h-4 w-4 text-foreground" />
             <div>

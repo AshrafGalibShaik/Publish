@@ -58,21 +58,21 @@ function EditorComponent() {
   return (
     <div className="min-h-screen bg-white">
       <header className="header-glass sticky top-0 z-10">
-        <div className="max-w-6xl mx-auto px-5 sm:px-8 h-16 flex items-center justify-between">
-          <Link href="/dashboard">
-            <Button variant="ghost" size="sm" className="gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
-              <ArrowLeft className="h-4 w-4" /> Dashboard
+        <div className="max-w-6xl mx-auto px-5 sm:px-8 h-16 flex items-center justify-between gap-4">
+          <Link href="/dashboard" className="flex-shrink-0">
+            <Button variant="ghost" size="sm" className="gap-1.5 text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors px-2">
+              <ArrowLeft className="h-4 w-4" /> <span className="hidden sm:inline">Dashboard</span><span className="sm:hidden">Back</span>
             </Button>
           </Link>
-          <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-secondary border border-border flex items-center justify-center">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="w-7 h-7 rounded-lg bg-secondary border border-border flex items-center justify-center flex-shrink-0">
               <PenLine className="h-3.5 w-3.5 text-foreground" />
             </div>
-            <h1 className="font-serif text-lg text-foreground">
+            <h1 className="font-serif text-base sm:text-lg text-foreground truncate font-medium">
               {content ? "Edit article" : "New article"}
             </h1>
           </div>
-          <div className="w-24" />
+          <div className="w-8 sm:w-24 flex-shrink-0" />
         </div>
       </header>
 

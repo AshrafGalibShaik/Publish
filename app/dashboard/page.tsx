@@ -81,14 +81,14 @@ export default function DashboardPage() {
 
         <Tabs defaultValue="drafts" className="space-y-8">
           <TabsList className="bg-secondary/50 border border-border p-0.5 rounded-lg w-full max-w-[380px] grid grid-cols-3 h-10">
-            <TabsTrigger value="drafts" className="gap-1.5 text-xs data-[state=active]:bg-white data-[state=active]:shadow-sm rounded-md transition-all">
-              <FileText className="h-3.5 w-3.5" /> Drafts
+            <TabsTrigger value="drafts" className="gap-1 sm:gap-1.5 text-[11px] sm:text-xs data-[state=active]:bg-white data-[state=active]:shadow-sm rounded-md transition-all">
+              <FileText className="h-3.5 w-3.5" /> <span>Drafts</span>
             </TabsTrigger>
-            <TabsTrigger value="search" className="gap-1.5 text-xs data-[state=active]:bg-white data-[state=active]:shadow-sm rounded-md transition-all">
-              <Search className="h-3.5 w-3.5" /> Search
+            <TabsTrigger value="search" className="gap-1 sm:gap-1.5 text-[11px] sm:text-xs data-[state=active]:bg-white data-[state=active]:shadow-sm rounded-md transition-all">
+              <Search className="h-3.5 w-3.5" /> <span>Search</span>
             </TabsTrigger>
-            <TabsTrigger value="explore" className="gap-1.5 text-xs data-[state=active]:bg-white data-[state=active]:shadow-sm rounded-md transition-all">
-              <Compass className="h-3.5 w-3.5" /> Explore
+            <TabsTrigger value="explore" className="gap-1 sm:gap-1.5 text-[11px] sm:text-xs data-[state=active]:bg-white data-[state=active]:shadow-sm rounded-md transition-all">
+              <Compass className="h-3.5 w-3.5" /> <span>Explore</span>
             </TabsTrigger>
           </TabsList>
 

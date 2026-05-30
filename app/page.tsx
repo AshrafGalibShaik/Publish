@@ -2,13 +2,14 @@
 
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { ArrowRight, FileText, GitBranch, Search, Sparkles, Shield, Zap, Globe, CheckCircle, Loader2, ArrowUpRight, Cpu } from "lucide-react";
+import { ArrowRight, FileText, GitBranch, Search, Sparkles, Shield, Zap, Globe, CheckCircle, Loader2, ArrowUpRight, Cpu, Menu, X } from "lucide-react";
 import Image from "next/image";
 import { useAuth } from "@/hooks/useAuth";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function HomePage() {
   const { user, loading, signOut } = useAuth();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const sectionsRef = useRef<HTMLDivElement[]>([]);
 
   // Intersection observer for scroll-triggered reveals
@@ -36,7 +37,7 @@ export default function HomePage() {
       {/* ── Header ── */}
       <header className="header-glass sticky top-0 z-50 transition-all duration-300">
         <div className="max-w-6xl mx-auto px-5 sm:px-8 h-16 flex items-center justify-between">
-          <Link href="/" className="font-serif text-xl tracking-tight text-foreground flex items-center gap-2.5 group">
+          <Link href="/" className="font-serif text-xl tracking-tight text-foreground flex items-center gap-2.5 group flex-shrink-0">
             <img
               src="/Screenshot 2026-05-29 092754.png"
               alt="Publish Logo"
@@ -45,7 +46,9 @@ export default function HomePage() {
             <span className="font-bold">PUBLISH</span>
             <span className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground border-l border-border pl-2.5 font-sans font-medium transition-all group-hover:text-foreground hidden sm:inline">Enterprise</span>
           </Link>
-          <nav className="flex items-center gap-1">
+          
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center gap-1">
             <Link href="/publications" className="nav-link-underline mx-2">
               <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors py-1">Registry</span>
             </Link>
@@ -74,7 +77,66 @@ export default function HomePage() {
               </>
             )}
           </nav>
+
+          {/* Mobile Navigation Toggle */}
+          <div className="flex md:hidden items-center">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="text-foreground transition-colors"
+            >
+              {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </Button>
+          </div>
         </div>
+
+        {/* Mobile Navigation Drawer */}
+        {mobileMenuOpen && (
+          <div className="md:hidden border-t border-border bg-white/95 backdrop-blur-lg px-5 py-6 space-y-4 animate-fade-in shadow-lg">
+            <Link
+              href="/publications"
+              className="block text-sm font-medium uppercase tracking-wider text-muted-foreground hover:text-foreground py-2.5 border-b border-secondary"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Registry
+            </Link>
+            {loading ? (
+              <div className="py-2"><Loader2 className="h-4 w-4 animate-spin text-muted-foreground" /></div>
+            ) : user ? (
+              <>
+                <Link
+                  href="/dashboard"
+                  className="block text-sm font-medium uppercase tracking-wider text-muted-foreground hover:text-foreground py-2.5 border-b border-secondary"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Dashboard
+                </Link>
+                <button
+                  onClick={() => { signOut(); setMobileMenuOpen(false); }}
+                  className="block w-full text-left text-sm font-medium uppercase tracking-wider text-muted-foreground hover:text-foreground py-2.5 border-b border-secondary"
+                >
+                  Sign Out
+                </button>
+              </>
+            ) : (
+              <div className="space-y-4 pt-2">
+                <Link
+                  href="/login"
+                  className="block text-sm font-medium uppercase tracking-wider text-muted-foreground hover:text-foreground py-2"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Sign In
+                </Link>
+                <Link href="/signup" onClick={() => setMobileMenuOpen(false)}>
+                  <Button className="w-full h-11 text-xs uppercase tracking-wider btn-shimmer mt-2">
+                    Get Started <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+                  </Button>
+                </Link>
+              </div>
+            )}
+          </div>
+        )}
       </header>
 
       {/* ── Hero section ── */}
@@ -262,7 +324,7 @@ export default function HomePage() {
         </div>
       </section>
        {/* ── Full-bleed image break ── */}
-      <section className="reveal-section relative overflow-hidden" style={{ height: "420px" }}>
+      <section className="reveal-section relative overflow-hidden h-[320px] sm:h-[420px]">
         <img
           src="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1600&auto=format&fit=crop&q=80"
           alt="Modern city skyline at night representing global enterprise reach"
@@ -273,11 +335,11 @@ export default function HomePage() {
         {/* Overlay text */}
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-5 px-6 text-center z-10">
           <p className="font-mono text-[10px] uppercase tracking-[0.35em] text-white/60">TRUSTED BY ENTERPRISES WORLDWIDE</p>
-          <h2 className="font-serif text-3xl sm:text-5xl text-white font-light tracking-tight max-w-2xl leading-tight">
+          <h2 className="font-serif text-2xl sm:text-5xl text-white font-light tracking-tight max-w-2xl leading-tight">
             Institutional knowledge, <br /><span className="italic">secured for the long term.</span>
           </h2>
           <div className="divider-fade w-48 opacity-30 mt-2" style={{ background: "linear-gradient(90deg, transparent 0%, white 40%, white 60%, transparent 100%)" }} />
-          <p className="text-white/50 text-xs font-mono uppercase tracking-widest">ENCRYPTED · IMMUTABLE · DECENTRALIZED</p>
+          <p className="text-white/50 text-[10px] font-mono uppercase tracking-widest">ENCRYPTED · IMMUTABLE · DECENTRALIZED</p>
         </div>
       </section>
 
