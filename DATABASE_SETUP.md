@@ -182,6 +182,7 @@ All tables have RLS enabled. Key policies:
 
 ### users
 - SELECT: Only own records
+- INSERT: Only own records
 - UPDATE: Only own records
 
 ### content

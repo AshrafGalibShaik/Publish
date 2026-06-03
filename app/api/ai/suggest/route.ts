@@ -36,6 +36,10 @@ export async function POST(request: NextRequest) {
       systemInstruction =
         "You are a content tagger. Generate 3-5 relevant, single-word topics or keywords (comma-separated, no bullet points) for the provided text.";
       userPrompt = `Generate 3-5 keywords for this content:\n\n${prompt}`;
+    } else if (type === "ai-reply") {
+      systemInstruction =
+        "You are an active, intelligent, and slightly witty community member on an AI-native forum. Analyze the provided post or comment context and write a thoughtful, conversational response. Keep it relatively brief, use clean markdown, and offer real value or a unique angle.";
+      userPrompt = `Post/Comment Context:\n${context || ''}\n\nUser Question/Input:\n"${prompt}"\n\nGenerate your community response:`;
     }
 
     const completion = await groq.chat.completions.create({

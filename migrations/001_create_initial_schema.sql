@@ -105,6 +105,9 @@ ALTER TABLE content_embeddings ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can view their own data" ON users
   FOR SELECT USING (auth.uid()::text = id::text OR auth.role() = 'service_role');
 
+CREATE POLICY "Users can insert their own data" ON users
+  FOR INSERT WITH CHECK (auth.uid()::text = id::text OR auth.role() = 'service_role');
+
 CREATE POLICY "Users can update their own data" ON users
   FOR UPDATE USING (auth.uid()::text = id::text OR auth.role() = 'service_role');
 

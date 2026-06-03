@@ -321,7 +321,7 @@ export default function ProfilePage() {
                       </p>
                       <div className="flex items-center gap-1.5 text-[10px] font-mono text-muted-foreground pt-1">
                         <Calendar className="h-3 w-3" />
-                        <span>Published {formatDistanceToNow(new Date(pub.published_at!), { addSuffix: true })}</span>
+                        <span>Published {pub.published_at ? formatDistanceToNow(new Date(pub.published_at), { addSuffix: true }) : "recently"}</span>
                       </div>
                     </div>
                   ))}

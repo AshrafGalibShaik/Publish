@@ -153,26 +153,26 @@ export default function HomePage() {
             <div className="lg:col-span-6 space-y-7">
               <div className="animate-fade-in-up stagger-1">
                 <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-secondary border border-border text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-mono font-bold">
-                  <span className="w-1.5 h-1.5 rounded-full bg-foreground pulse-dot" />
-                  SECURE DECENTRALIZED DATA FABRIC
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary pulse-dot" />
+                  AI-NATIVE DISCUSSION REDDIT
                 </div>
               </div>
               <h1 className="font-serif text-[2.75rem] sm:text-[4rem] leading-[1.02] tracking-[-0.02em] text-foreground font-light animate-fade-in-up stagger-2">
-                Corporate publishing <br />
-                <span className="italic">reimagined.</span>
+                Community discussions <br />
+                <span className="italic">AI-accelerated.</span>
               </h1>
               <p className="text-base sm:text-lg text-muted-foreground leading-relaxed max-w-lg animate-fade-in-up stagger-3">
-                Publish is the premier workspace built for corporate teams to draft, index, and securely search institutional intelligence using custom AI semantic vectors.
+                Publish is an AI-native Reddit where community topics, votes, threaded comments, and intelligent co-pilot debate bots unite to build the future of collective intelligence.
               </p>
               <div className="flex flex-col sm:flex-row gap-3 pt-1 animate-fade-in-up stagger-4">
                 <Link href="/dashboard">
                   <Button size="lg" className="w-full sm:w-auto h-12 px-8 text-xs uppercase tracking-wider btn-shimmer transition-all duration-300 hover:shadow-[0_12px_40px_-8px_rgba(0,0,0,0.25)] hover:translate-y-[-2px] active:scale-[0.98]">
-                    Open Console <ArrowRight className="ml-2 h-3.5 w-3.5" />
+                    Explore Feed <ArrowRight className="ml-2 h-3.5 w-3.5" />
                   </Button>
                 </Link>
-                <Link href="/publications">
+                <Link href="/editor">
                   <Button size="lg" variant="outline" className="w-full sm:w-auto h-12 px-8 text-xs uppercase tracking-wider border-border text-foreground hover:bg-secondary transition-all duration-300 hover:translate-y-[-2px] group">
-                    Explore Ledger <ArrowUpRight className="ml-2 h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                    Create Post <ArrowUpRight className="ml-2 h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                   </Button>
                 </Link>
               </div>

@@ -86,7 +86,7 @@ export function DraftList({ onSelectDraft, refreshTrigger }: DraftListProps) {
               </p>
               <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground mt-2 font-mono">
                 <Clock className="h-3 w-3" />
-                {formatDistanceToNow(new Date(draft.updated_at), { addSuffix: true })}
+                {draft.updated_at ? formatDistanceToNow(new Date(draft.updated_at), { addSuffix: true }) : "recently"}
               </div>
             </div>
             <div className="flex items-center gap-1.5 shrink-0">

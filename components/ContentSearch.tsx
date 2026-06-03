@@ -174,7 +174,7 @@ export function ContentSearch() {
                     <div className="flex items-center gap-4 flex-wrap text-[11px] text-muted-foreground/80 pt-1">
                       <div className="flex items-center gap-1 font-mono">
                         <Clock className="h-3 w-3" />
-                        {formatDistanceToNow(new Date(content.published_at!), { addSuffix: true })}
+                        {content.published_at ? formatDistanceToNow(new Date(content.published_at), { addSuffix: true }) : "recently"}
                       </div>
                       
                       {content.author && (
@@ -235,7 +235,7 @@ export function ContentSearch() {
                         <div className="flex items-center gap-4 flex-wrap text-[11px] text-muted-foreground/80 pt-1">
                           <div className="flex items-center gap-1">
                             <Clock className="h-3 w-3" />
-                            {formatDistanceToNow(new Date(content.published_at!), { addSuffix: true })}
+                            {content.published_at ? formatDistanceToNow(new Date(content.published_at), { addSuffix: true }) : "recently"}
                           </div>
                           
                           {content.author && (

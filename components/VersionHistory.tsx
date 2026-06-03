@@ -87,7 +87,7 @@ export function VersionHistory({ contentId, onRestore }: VersionHistoryProps) {
               <p className="text-xs text-muted-foreground">{version.change_summary || "—"}</p>
               <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
                 <Clock className="h-3 w-3" />
-                {formatDistanceToNow(new Date(version.created_at), { addSuffix: true })}
+                {version.created_at ? formatDistanceToNow(new Date(version.created_at), { addSuffix: true }) : "recently"}
               </div>
             </div>
 

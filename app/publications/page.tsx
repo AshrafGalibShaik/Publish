@@ -204,7 +204,7 @@ export default function PublicationsPage() {
                         <div className="flex items-center gap-1.5">
                           <Clock className="h-3.5 w-3.5 text-foreground" />
                           <span>
-                            Published {formatDistanceToNow(new Date(pub.published_at!), { addSuffix: true })}
+                            Published {pub.published_at ? formatDistanceToNow(new Date(pub.published_at), { addSuffix: true }) : "recently"}
                           </span>
                         </div>
                       </div>

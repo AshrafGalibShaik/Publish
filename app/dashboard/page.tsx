@@ -117,7 +117,7 @@ export default function DashboardPage() {
               </div>
               <h1 className="font-serif text-3xl sm:text-4xl text-foreground tracking-tight font-medium">Dashboard</h1>
             </div>
-            <p className="text-xs sm:text-sm text-muted-foreground">Manage your content drafts and explore semantic database publications.</p>
+            <p className="text-xs sm:text-sm text-muted-foreground">Manage your draft posts, explore community threads, and vote on AI-native publications.</p>
           </div>
           
           <div className="flex items-center gap-2">
