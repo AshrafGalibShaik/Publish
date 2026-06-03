@@ -274,6 +274,22 @@ export function ExploreArticles() {
                     </p>
                   </div>
 
+                  {/* Thumbnail: Extract first <img> from article HTML */}
+                  {(() => {
+                    const imgMatch = article.content_html?.match(/<img[^>]+src="([^"]+)"/);
+                    const thumbnailUrl = imgMatch?.[1];
+                    if (!thumbnailUrl) return null;
+                    return (
+                      <div className="rounded-lg overflow-hidden border border-border/50 bg-secondary/10 max-h-48">
+                        <img
+                          src={thumbnailUrl}
+                          alt={`Thumbnail for ${article.title}`}
+                          className="w-full h-full max-h-48 object-cover"
+                        />
+                      </div>
+                    );
+                  })()}
+
                   {/* AI Generated Summary Box */}
                   {summary && (
                     <div className="bg-secondary/40 border-l-2 border-primary/50 p-3 rounded-r-lg text-xs leading-relaxed text-foreground animate-fade-in flex gap-2.5 items-start">

@@ -11,6 +11,7 @@ import { Draft, Content, supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { generateContentEmbedding } from "@/lib/embeddings";
+import ImageExtension from "@tiptap/extension-image";
 import {
   Save,
   Send,
@@ -28,6 +29,7 @@ import {
   ListOrdered,
   Quote,
   Terminal,
+  Image as ImageIcon,
 } from "lucide-react";
 
 const DEV_USER_ID = "00000000-0000-0000-0000-000000000000";
@@ -52,8 +54,139 @@ export function ContentEditor({ draft, content, onSave, onPublish }: ContentEdit
   const [aiResult, setAiResult] = useState("");
   const [aiCopied, setAiCopied] = useState(false);
 
+  // Puter AI Image Generation States
+  const [imagePrompt, setImagePrompt] = useState("");
+  const [selectedImageModel, setSelectedImageModel] = useState("black-forest-labs/flux-schnell");
+  const [imageLoading, setImageLoading] = useState(false);
+  const [generatedImageUrl, setGeneratedImageUrl] = useState("");
+
+  const handleGenerateImage = async () => {
+    if (!imagePrompt.trim()) {
+      toast.error("Please enter a prompt for the image");
+      return;
+    }
+    if (typeof window === "undefined") return;
+
+    setImageLoading(true);
+    try {
+      const { puter } = await import("@heyputer/puter.js");
+      const imgElement = await puter.ai.txt2img(imagePrompt, {
+        model: selectedImageModel
+      });
+
+      if (imgElement && imgElement.src) {
+        setGeneratedImageUrl(imgElement.src);
+        toast.success("Image generated successfully!");
+      } else {
+        toast.error("Failed to generate image.");
+      }
+    } catch (err: any) {
+      console.error("Puter Image Gen Error:", err);
+      toast.error(err?.message || "Failed to generate image.");
+    } finally {
+      setImageLoading(false);
+    }
+  };
+
+  const insertImageIntoEditor = () => {
+    if (editor && generatedImageUrl) {
+      // @ts-ignore
+      editor.chain().focus().setImage({ src: generatedImageUrl }).run();
+      toast.success("Image embedded into post");
+    }
+  };
+
+  const [imagePromptLoading, setImagePromptLoading] = useState(false);
+  const [generatingBanner, setGeneratingBanner] = useState(false);
+
+  const autoGenerateBanner = async () => {
+    if (!title.trim()) {
+      toast.error("Please enter an article title first");
+      return;
+    }
+    setGeneratingBanner(true);
+    try {
+      // 1. Generate visual banner prompt
+      const res = await fetch("/api/ai/suggest", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          prompt: title,
+          type: "image-prompt",
+          context: "Write a high-end, clean, aesthetic cover banner illustration prompt."
+        })
+      });
+      const data = await res.json();
+      const promptText = data.suggestion || `A beautiful, minimalist, high-end abstract banner illustration for: ${title}`;
+
+      // 2. Call Puter client
+      const { puter } = await import("@heyputer/puter.js");
+      const imgElement = await puter.ai.txt2img(promptText, {
+        model: "black-forest-labs/flux-schnell"
+      });
+
+      if (imgElement && imgElement.src) {
+        if (editor) {
+          // Prepend to editor content
+          const currentContent = editor.getHTML();
+          // Insert banner at the top
+          const bannerHtml = `<img src="${imgElement.src}" alt="Auto-generated Banner: ${title}" class="rounded-xl border border-border shadow-sm max-w-full w-full h-64 sm:h-80 object-cover my-4 mx-auto block" data-banner="true" />`;
+          editor.commands.setContent(bannerHtml + currentContent);
+          toast.success("Article banner auto-generated and inserted at the top!");
+        }
+      } else {
+        toast.error("Failed to generate banner image.");
+      }
+    } catch (err: any) {
+      console.error("Banner Generation Error:", err);
+      toast.error(err?.message || "Failed to auto-generate banner.");
+    } finally {
+      setGeneratingBanner(false);
+    }
+  };
+
+  const autoGenerateImagePrompt = async () => {
+    const editorText = editor?.getText() || "";
+    if (!editorText.trim() && !title.trim()) {
+      toast.error("Add some article content or title first");
+      return;
+    }
+    setImagePromptLoading(true);
+    try {
+      const res = await fetch("/api/ai/suggest", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          prompt: editorText.substring(0, 500),
+          type: "image-prompt",
+          context: title
+        })
+      });
+      const data = await res.json();
+      if (data.suggestion) {
+        setImagePrompt(data.suggestion.replace(/^["']|["']$/g, '').trim());
+        toast.success("Image prompt generated from article!");
+      } else {
+        toast.error("Failed to generate image prompt");
+      }
+    } catch (err) {
+      toast.error("AI prompt generation failed");
+    } finally {
+      setImagePromptLoading(false);
+    }
+  };
+
   const editor = useEditor({
-    extensions: [StarterKit, Link.configure({ openOnClick: false })],
+    extensions: [
+      StarterKit,
+      Link.configure({ openOnClick: false }),
+      ImageExtension.configure({
+        allowBase64: true,
+        HTMLAttributes: {
+          class: "rounded-xl border border-border shadow-sm max-w-full my-4 mx-auto block",
+        },
+      }),
+    ],
     content: draft?.content_html || content?.content_html || "",
   });
 
@@ -175,7 +308,21 @@ export function ContentEditor({ draft, content, onSave, onPublish }: ContentEdit
 
   const insertIntoEditor = () => {
     if (editor && aiResult) {
-      editor.commands.insertContent(aiResult.replace(/\n/g, "<br />"));
+      let contentToInsert = aiResult;
+      
+      // Clean thinking blocks or markdown fences if they bypassed API cleaning
+      contentToInsert = contentToInsert.replace(/<think>[\s\S]*?<\/think>/gi, "").trim();
+      if (contentToInsert.includes("```")) {
+        contentToInsert = contentToInsert.replace(/```[a-z]*\n?/gi, "").replace(/```$/g, "").trim();
+      }
+
+      // Check if it looks like HTML. If it is plain text, replace newlines with br tags
+      const isHtml = /<[a-z][\s\S]*>/i.test(contentToInsert);
+      if (!isHtml) {
+        contentToInsert = contentToInsert.replace(/\n/g, "<br />");
+      }
+      
+      editor.commands.insertContent(contentToInsert);
       toast.success("Inserted into editor");
     }
   };
@@ -187,7 +334,18 @@ export function ContentEditor({ draft, content, onSave, onPublish }: ContentEdit
         {/* Fields */}
         <div className="space-y-5">
           <div>
-            <label className="text-xs font-medium text-foreground block mb-1.5 font-mono uppercase tracking-wider text-[10px]">Title</label>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="text-xs font-medium text-foreground block font-mono uppercase tracking-wider text-[10px]">Title</label>
+              <button
+                type="button"
+                onClick={autoGenerateBanner}
+                disabled={generatingBanner || !title.trim()}
+                className="text-[11px] text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors cursor-pointer font-mono"
+              >
+                {generatingBanner ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3" />}
+                Auto-generate Banner
+              </button>
+            </div>
             <Input placeholder="Article title" value={title} onChange={(e) => setTitle(e.target.value)}
               className="h-10 bg-white border-border text-foreground placeholder:text-muted-foreground/50 focus:border-foreground/30 focus-visible:ring-0 text-sm font-sans" />
           </div>
@@ -331,6 +489,22 @@ export function ContentEditor({ draft, content, onSave, onPublish }: ContentEdit
               >
                 <Terminal className="h-3.5 w-3.5" />
               </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  const url = prompt("Enter image URL:");
+                  if (url) {
+                    // @ts-ignore
+                    editor.chain().focus().setImage({ src: url }).run();
+                  }
+                }}
+                className="h-7 w-7 p-0 cursor-pointer transition-colors text-muted-foreground hover:text-foreground"
+                type="button"
+                title="Insert Image URL"
+              >
+                <ImageIcon className="h-3.5 w-3.5" />
+              </Button>
             </div>
           )}
 
@@ -403,6 +577,88 @@ export function ContentEditor({ draft, content, onSave, onPublish }: ContentEdit
                   <FileText className="h-3 w-3" /> Insert
                 </Button>
               </div>
+            </div>
+          )}
+
+          {/* AI Photo Generator section using Puter API */}
+          <div className="border-t border-border/80 my-4" />
+
+          <div className="flex items-center gap-2.5 pb-2">
+            <ImageIcon className="h-4.5 w-4.5 text-foreground" />
+            <div>
+              <h2 className="font-medium text-foreground text-sm">AI Image Generator</h2>
+              <p className="text-[11px] text-muted-foreground">Puter API · Free Unlimited</p>
+            </div>
+          </div>
+
+          <div>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="text-[11px] font-medium text-foreground">Image Prompt</label>
+              <button
+                type="button"
+                onClick={autoGenerateImagePrompt}
+                disabled={imagePromptLoading}
+                className="text-[11px] text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors cursor-pointer font-mono"
+              >
+                {imagePromptLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3" />}
+                Auto from article
+              </button>
+            </div>
+            <Textarea
+              placeholder="E.g., A peaceful mountain landscape at sunset, cinematic lighting, 4k..."
+              value={imagePrompt}
+              onChange={(e) => setImagePrompt(e.target.value)}
+              rows={2}
+              className="bg-white border-border text-foreground placeholder:text-muted-foreground/50 text-xs font-sans"
+            />
+          </div>
+
+          <div>
+            <label className="text-[11px] font-medium text-foreground block mb-1.5">AI Image Model</label>
+            <select
+              value={selectedImageModel}
+              onChange={(e) => setSelectedImageModel(e.target.value)}
+              className="w-full bg-white border border-border rounded-md px-2.5 py-1.5 text-xs text-foreground outline-none focus:border-foreground/30 font-sans"
+            >
+              <option value="black-forest-labs/flux-schnell">Flux.1 Schnell (Fast & Crisp)</option>
+              <option value="black-forest-labs/flux-1.1-pro">Flux 1.1 Pro (Ultra Quality)</option>
+              <option value="stabilityai/stable-diffusion-xl-base-1.0">Stable Diffusion XL</option>
+              <option value="stabilityai/stable-diffusion-3-medium">Stable Diffusion 3</option>
+              <option value="gemini-2.5-flash-image-preview">Gemini 2.5 Flash Image Preview</option>
+              <option value="gpt-image-2">GPT Image 2</option>
+            </select>
+          </div>
+
+          <Button
+            size="sm"
+            onClick={handleGenerateImage}
+            disabled={imageLoading || !imagePrompt.trim()}
+            className="w-full text-xs h-8 gap-1.5 btn-shimmer"
+            type="button"
+          >
+            {imageLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
+            {imageLoading ? "Generating..." : "Generate AI Image"}
+          </Button>
+
+          {generatedImageUrl && (
+            <div className="space-y-3 pt-2">
+              <label className="text-[11px] font-medium text-foreground block">Generated Preview</label>
+              <div className="border border-border rounded-lg overflow-hidden bg-secondary/10 p-1 flex justify-center">
+                <img
+                  src={generatedImageUrl}
+                  alt="Generated Preview"
+                  className="max-h-48 max-w-full rounded-md object-contain"
+                />
+              </div>
+              <Button
+                size="sm"
+                onClick={insertImageIntoEditor}
+                className="w-full text-xs h-8 gap-1.5"
+                type="button"
+              >
+                <ImageIcon className="h-3.5 w-3.5" />
+                Insert Image into Editor
+              </Button>
             </div>
           )}
         </div>

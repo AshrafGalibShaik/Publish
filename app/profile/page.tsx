@@ -6,19 +6,22 @@ import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { Loader2, ArrowLeft, User, Mail, Calendar, FileText, Check, Edit2 } from "lucide-react";
+import { Loader2, ArrowLeft, User, Mail, Calendar, FileText, Check, Edit2, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 import { toast } from "sonner";
 
 export default function ProfilePage() {
   const { user, loading: authLoading } = useAuth();
-  const [profile, setProfile] = useState<{ id: string; name: string; email: string; created_at?: string } | null>(null);
+  const [profile, setProfile] = useState<{ id: string; name: string; email: string; image?: string; banner?: string; created_at?: string } | null>(null);
   const [publications, setPublications] = useState<Content[]>([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [bannerUrl, setBannerUrl] = useState("");
   const [saving, setSaving] = useState(false);
+  const [aiGenerating, setAiGenerating] = useState<"photo" | "banner" | null>(null);
 
   useEffect(() => {
     if (user) {
@@ -45,11 +48,17 @@ export default function ProfilePage() {
           id: user.id,
           name: user.user_metadata?.name || user.email?.split("@")[0] || "Anonymous User",
           email: user.email || "",
+          image: user.user_metadata?.avatar_url || "",
+          banner: user.user_metadata?.banner_url || "",
         });
         setName(user.user_metadata?.name || user.email?.split("@")[0] || "Anonymous User");
+        setImageUrl(user.user_metadata?.avatar_url || "");
+        setBannerUrl(user.user_metadata?.banner_url || "");
       } else {
         setProfile(profileData);
         setName(profileData.name || "");
+        setImageUrl(profileData.image || "");
+        setBannerUrl(profileData.banner || "");
       }
 
       // 2. Fetch publications by this user
@@ -70,6 +79,37 @@ export default function ProfilePage() {
     }
   };
 
+  const generateProfileAsset = async (type: "photo" | "banner") => {
+    if (typeof window === "undefined") return;
+    const promptText = prompt(`Enter prompt for your AI-generated profile ${type}:`);
+    if (!promptText || !promptText.trim()) return;
+
+    setAiGenerating(type);
+    try {
+      const { puter } = await import("@heyputer/puter.js");
+      const imgElement = await puter.ai.txt2img(promptText.trim(), {
+        model: "black-forest-labs/flux-schnell"
+      });
+
+      if (imgElement && imgElement.src) {
+        if (type === "photo") {
+          setImageUrl(imgElement.src);
+          toast.success("Profile photo generated successfully!");
+        } else {
+          setBannerUrl(imgElement.src);
+          toast.success("Profile banner generated successfully!");
+        }
+      } else {
+        toast.error("Failed to generate image.");
+      }
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err?.message || "Failed to generate image.");
+    } finally {
+      setAiGenerating(null);
+    }
+  };
+
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user || !profile) return;
@@ -87,6 +127,8 @@ export default function ProfilePage() {
           id: user.id,
           email: user.email!,
           name: name,
+          image: imageUrl,
+          banner: bannerUrl,
           updated_at: new Date().toISOString(),
         });
 
@@ -94,12 +136,16 @@ export default function ProfilePage() {
 
       // Update Auth metadata
       const { error: authError } = await supabase.auth.updateUser({
-        data: { name: name },
+        data: { 
+          name: name,
+          avatar_url: imageUrl,
+          banner_url: bannerUrl
+        },
       });
 
       if (authError) throw authError;
 
-      setProfile((prev) => prev ? { ...prev, name } : null);
+      setProfile((prev) => prev ? { ...prev, name, image: imageUrl, banner: bannerUrl } : null);
       setEditing(false);
       toast.success("Profile updated successfully!");
     } catch (error: any) {
@@ -158,14 +204,19 @@ export default function ProfilePage() {
       </header>
 
       {/* Profile Header Banner */}
-      <div className="h-36 w-full bg-gradient-to-r from-secondary via-muted to-secondary/80 border-b border-border relative overflow-hidden flex items-end px-5 sm:px-8 pb-4">
-        <div className="absolute inset-0 pattern-crosshatch opacity-30 pointer-events-none" />
+      <div className="h-44 w-full border-b border-border relative overflow-hidden flex items-end px-5 sm:px-8 pb-4 bg-cover bg-center"
+           style={{ backgroundImage: profile?.banner ? `url(${profile.banner})` : 'none' }}>
+        {!profile?.banner && <div className="absolute inset-0 bg-gradient-to-r from-secondary via-muted to-secondary/80 pattern-crosshatch opacity-30 pointer-events-none" />}
         <div className="max-w-6xl w-full mx-auto relative z-10 flex justify-between items-end">
           <div className="flex items-center gap-3.5 translate-y-8 sm:translate-y-10">
-            <div className="w-18 h-18 sm:w-20 sm:h-20 rounded-2xl bg-white border border-border shadow-sm flex items-center justify-center p-1.5">
-              <div className="w-full h-full rounded-xl bg-foreground flex items-center justify-center text-xl sm:text-2xl font-serif text-primary-foreground font-semibold">
-                {(profile?.name || "U").charAt(0).toUpperCase()}
-              </div>
+            <div className="w-18 h-18 sm:w-20 sm:h-20 rounded-2xl bg-white border border-border shadow-sm flex items-center justify-center p-1.5 overflow-hidden">
+              {profile?.image ? (
+                <img src={profile.image} alt="Profile Photo" className="w-full h-full rounded-xl object-cover" />
+              ) : (
+                <div className="w-full h-full rounded-xl bg-foreground flex items-center justify-center text-xl sm:text-2xl font-serif text-primary-foreground font-semibold">
+                  {(profile?.name || "U").charAt(0).toUpperCase()}
+                </div>
+              )}
             </div>
           </div>
           <div className="hidden sm:block">
@@ -236,11 +287,61 @@ export default function ProfilePage() {
                       required
                     />
                   </div>
-                  <div className="flex gap-2">
+
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <label className="text-[10px] uppercase font-mono text-muted-foreground block tracking-wider">Profile Photo URL</label>
+                      <button
+                        type="button"
+                        onClick={() => generateProfileAsset("photo")}
+                        disabled={aiGenerating !== null}
+                        className="text-[9px] uppercase font-mono text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors cursor-pointer"
+                      >
+                        {aiGenerating === "photo" ? <Loader2 className="h-2.5 w-2.5 animate-spin" /> : <Sparkles className="h-2.5 w-2.5" />}
+                        AI Gen
+                      </button>
+                    </div>
+                    <Input
+                      type="text"
+                      value={imageUrl}
+                      onChange={(e) => setImageUrl(e.target.value)}
+                      className="h-10 bg-white border-border text-foreground text-xs transition-all duration-200 focus:border-foreground/30 font-mono"
+                      placeholder="Photo URL or generate with AI"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <label className="text-[10px] uppercase font-mono text-muted-foreground block tracking-wider">Profile Banner URL</label>
+                      <button
+                        type="button"
+                        onClick={() => generateProfileAsset("banner")}
+                        disabled={aiGenerating !== null}
+                        className="text-[9px] uppercase font-mono text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors cursor-pointer"
+                      >
+                        {aiGenerating === "banner" ? <Loader2 className="h-2.5 w-2.5 animate-spin" /> : <Sparkles className="h-2.5 w-2.5" />}
+                        AI Gen
+                      </button>
+                    </div>
+                    <Input
+                      type="text"
+                      value={bannerUrl}
+                      onChange={(e) => setBannerUrl(e.target.value)}
+                      className="h-10 bg-white border-border text-foreground text-xs transition-all duration-200 focus:border-foreground/30 font-mono"
+                      placeholder="Banner URL or generate with AI"
+                    />
+                  </div>
+
+                  <div className="flex gap-2 pt-2">
                     <Button
                       type="button"
                       variant="outline"
-                      onClick={() => { setEditing(false); setName(profile?.name || ""); }}
+                      onClick={() => {
+                        setEditing(false);
+                        setName(profile?.name || "");
+                        setImageUrl(profile?.image || "");
+                        setBannerUrl(profile?.banner || "");
+                      }}
                       className="flex-1 text-xs h-9 cursor-pointer"
                     >
                       Cancel

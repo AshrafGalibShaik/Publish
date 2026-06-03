@@ -255,6 +255,17 @@ export function PublishedContent({ slug }: PublishedContentProps) {
   const wordCount = content.content_text ? content.content_text.split(/\s+/).length : 0;
   const readingTime = Math.max(1, Math.round(wordCount / 225));
 
+  // Extract first image to use as banner if it's there
+  let bannerImgUrl: string | null = null;
+  let displayHtml = content.content_html;
+
+  const imgMatch = content.content_html?.match(/<img[^>]+src=["']([^"']+)["'][^>]*>/i);
+  if (imgMatch) {
+    bannerImgUrl = imgMatch[1];
+    // Remove the first image from content so it's not duplicated
+    displayHtml = content.content_html.replace(/<img[^>]+src=["']([^"']+)["'][^>]*>/i, "");
+  }
+
   return (
     <div className="max-w-3xl mx-auto py-10 px-4 sm:px-6 relative z-10 space-y-6">
       
@@ -326,10 +337,21 @@ export function PublishedContent({ slug }: PublishedContentProps) {
             </p>
           )}
 
+          {bannerImgUrl && (
+            <div className="w-full h-64 sm:h-80 rounded-xl overflow-hidden border border-border shadow-sm mb-4 relative group">
+              <img
+                src={bannerImgUrl}
+                alt={content.title}
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-102"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent pointer-events-none" />
+            </div>
+          )}
+
           <Card className="p-5 sm:p-7 bg-white border border-border rounded-xl shadow-sm">
             <div
-              className="prose max-w-none text-foreground leading-relaxed text-sm sm:text-base whitespace-pre-wrap font-sans"
-              dangerouslySetInnerHTML={{ __html: content.content_html }}
+              className="prose max-w-none text-foreground leading-relaxed text-sm sm:text-base font-sans"
+              dangerouslySetInnerHTML={{ __html: displayHtml }}
             />
           </Card>
 
