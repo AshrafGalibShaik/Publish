@@ -8,7 +8,7 @@ export default async function ContentPage({ params }: ContentPageProps) {
   const { slug } = await params;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white text-foreground page-dots">
       <PublishedContent slug={slug} />
     </div>
   );

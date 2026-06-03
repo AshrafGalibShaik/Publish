@@ -133,9 +133,8 @@ export default function ProfilePage() {
       </div>
     );
   }
-
   return (
-    <div className="min-h-screen bg-white text-foreground">
+    <div className="min-h-screen bg-white text-foreground page-dots">
       {/* Header */}
       <header className="header-glass sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-5 sm:px-8 h-16 flex items-center justify-between gap-4">
@@ -158,26 +157,38 @@ export default function ProfilePage() {
         </div>
       </header>
 
+      {/* Profile Header Banner */}
+      <div className="h-36 w-full bg-gradient-to-r from-secondary via-muted to-secondary/80 border-b border-border relative overflow-hidden flex items-end px-5 sm:px-8 pb-4">
+        <div className="absolute inset-0 pattern-crosshatch opacity-30 pointer-events-none" />
+        <div className="max-w-6xl w-full mx-auto relative z-10 flex justify-between items-end">
+          <div className="flex items-center gap-3.5 translate-y-8 sm:translate-y-10">
+            <div className="w-18 h-18 sm:w-20 sm:h-20 rounded-2xl bg-white border border-border shadow-sm flex items-center justify-center p-1.5">
+              <div className="w-full h-full rounded-xl bg-foreground flex items-center justify-center text-xl sm:text-2xl font-serif text-primary-foreground font-semibold">
+                {(profile?.name || "U").charAt(0).toUpperCase()}
+              </div>
+            </div>
+          </div>
+          <div className="hidden sm:block">
+            <span className="chip bg-white/80 border-border text-[9px] font-mono tracking-widest">
+              LEDGER STATUS: ACTIVE
+            </span>
+          </div>
+        </div>
+      </div>
+
       {/* Main Content */}
-      <main className="max-w-6xl mx-auto px-5 sm:px-8 py-10">
+      <main className="max-w-6xl mx-auto px-5 sm:px-8 pt-16 pb-10 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
           {/* Profile Meta Editor */}
           <div className="lg:col-span-4 space-y-6 animate-fade-in-up">
-            <Card className="p-6 border border-border bg-white rounded-xl space-y-6 hover-premium-card">
-              <div className="flex items-center gap-3 pb-4 border-b border-border">
-                <div className="w-12 h-12 rounded-xl bg-foreground flex items-center justify-center">
-                  <span className="text-lg font-serif text-primary-foreground font-medium">
-                    {(profile?.name || "U").charAt(0).toUpperCase()}
-                  </span>
-                </div>
-                <div>
-                  <h2 className="font-medium text-foreground text-sm">Identity profile</h2>
-                  <p className="text-[10px] text-muted-foreground font-mono uppercase flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 pulse-dot" />
-                    VERIFIED PROFILE NODE
-                  </p>
-                </div>
+            <Card className="p-6 border border-border bg-white rounded-xl space-y-6 hover-premium-card pt-8">
+              <div className="pb-4 border-b border-border">
+                <h2 className="font-serif text-lg text-foreground font-medium">Identity Node</h2>
+                <p className="text-[10px] text-muted-foreground font-mono uppercase flex items-center gap-1.5 mt-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 pulse-dot" />
+                  VERIFIED PROFILE INSTANCE
+                </p>
               </div>
 
               {!editing ? (
@@ -207,7 +218,7 @@ export default function ProfilePage() {
                     size="sm"
                     variant="outline"
                     onClick={() => setEditing(true)}
-                    className="w-full text-xs h-9 gap-1.5 mt-2 transition-all duration-200 hover:translate-y-[-1px]"
+                    className="w-full text-xs h-9 gap-1.5 mt-2 transition-all duration-200 hover:translate-y-[-1px] cursor-pointer"
                   >
                     <Edit2 className="h-3 w-3" /> Edit Profile Details
                   </Button>
@@ -230,14 +241,14 @@ export default function ProfilePage() {
                       type="button"
                       variant="outline"
                       onClick={() => { setEditing(false); setName(profile?.name || ""); }}
-                      className="flex-1 text-xs h-9"
+                      className="flex-1 text-xs h-9 cursor-pointer"
                     >
                       Cancel
                     </Button>
                     <Button
                       type="submit"
                       disabled={saving}
-                      className="flex-1 text-xs h-9 gap-1 btn-shimmer"
+                      className="flex-1 text-xs h-9 gap-1 btn-shimmer cursor-pointer"
                     >
                       {saving ? <Loader2 className="h-3 w-3 animate-spin" /> : <Check className="h-3 w-3" />}
                       Save
@@ -246,14 +257,31 @@ export default function ProfilePage() {
                 </form>
               )}
             </Card>
+
+            {/* Additional Info Box */}
+            <Card className="p-5 border border-border bg-white rounded-xl space-y-3 font-mono text-[11px] text-muted-foreground">
+              <div className="text-foreground font-serif text-sm font-medium border-b border-border pb-2">System Metrics</div>
+              <div className="flex justify-between">
+                <span>Verification Authority</span>
+                <span className="text-foreground">Publish Protocol</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Account Role</span>
+                <span className="text-foreground uppercase">Author Node</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Node ID</span>
+                <span className="text-foreground truncate max-w-[120px]">{profile?.id}</span>
+              </div>
+            </Card>
           </div>
 
           {/* Publications authored by this user */}
           <div className="lg:col-span-8 space-y-6 animate-fade-in-up stagger-2">
-            <div className="border border-border rounded-xl bg-white overflow-hidden">
+            <div className="border border-border rounded-xl bg-white overflow-hidden shadow-sm">
               <div className="px-5 py-4 border-b border-border bg-secondary/30 flex items-center justify-between">
-                <h3 className="font-serif text-base text-foreground">Publications Authored</h3>
-                <span className="chip">
+                <h3 className="font-serif text-base text-foreground font-medium">Publications Authored</h3>
+                <span className="chip bg-white border-border">
                   {publications.length} VERIFIED NODE{publications.length !== 1 ? "S" : ""}
                 </span>
               </div>
@@ -269,18 +297,25 @@ export default function ProfilePage() {
               ) : (
                 <div className="divide-y divide-border">
                   {publications.map((pub) => (
-                    <div key={pub.id} className="p-5 row-hover-lift flex flex-col gap-2.5 cursor-default">
-                      <div className="flex items-center gap-2">
-                        {pub.topic && (
-                          <span className="chip">
-                            {pub.topic}
+                    <div key={pub.id} className="p-5 row-hover-lift flex flex-col gap-2.5 cursor-pointer">
+                      <div className="flex items-center justify-between gap-2 flex-wrap">
+                        <div className="flex items-center gap-2">
+                          {pub.topic && (
+                            <span className="chip bg-white border-border">
+                              {pub.topic}
+                            </span>
+                          )}
+                          <span className="chip bg-secondary">
+                            NODE: {pub.id.substring(0, 8)}...
                           </span>
-                        )}
-                        <span className="chip bg-secondary">
-                          NODE: {pub.id.substring(0, 8)}...
-                        </span>
+                        </div>
+                        <Link href={`/content/${pub.slug}`}>
+                          <Button size="sm" variant="ghost" className="text-xs h-7 gap-1 font-mono text-muted-foreground hover:text-foreground px-2">
+                            View Snapshot &rarr;
+                          </Button>
+                        </Link>
                       </div>
-                      <h4 className="font-medium text-foreground text-sm">{pub.title}</h4>
+                      <h4 className="font-medium text-foreground text-sm font-sans">{pub.title}</h4>
                       <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
                         {pub.description || pub.content_text.substring(0, 150)}
                       </p>

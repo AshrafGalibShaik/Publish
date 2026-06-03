@@ -20,6 +20,14 @@ import {
   ListPlus,
   Check,
   Copy,
+  Bold,
+  Italic,
+  Strikethrough,
+  Code,
+  List,
+  ListOrdered,
+  Quote,
+  Terminal,
 } from "lucide-react";
 
 const DEV_USER_ID = "00000000-0000-0000-0000-000000000000";
@@ -179,52 +187,165 @@ export function ContentEditor({ draft, content, onSave, onPublish }: ContentEdit
         {/* Fields */}
         <div className="space-y-5">
           <div>
-            <label className="text-xs font-medium text-foreground block mb-1.5">Title</label>
+            <label className="text-xs font-medium text-foreground block mb-1.5 font-mono uppercase tracking-wider text-[10px]">Title</label>
             <Input placeholder="Article title" value={title} onChange={(e) => setTitle(e.target.value)}
-              className="h-10 bg-white border-border text-foreground placeholder:text-muted-foreground/50" />
+              className="h-10 bg-white border-border text-foreground placeholder:text-muted-foreground/50 focus:border-foreground/30 focus-visible:ring-0 text-sm font-sans" />
           </div>
           <div>
             <div className="flex items-center justify-between mb-1.5">
-              <label className="text-xs font-medium text-foreground">Description</label>
+              <label className="text-xs font-medium text-foreground font-mono uppercase tracking-wider text-[10px]">Description</label>
               <button type="button" onClick={() => callGroqAI("description")}
-                className="text-[11px] text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors">
+                className="text-[11px] text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors cursor-pointer font-mono">
                 <Sparkles className="h-3 w-3" /> Auto-generate
               </button>
             </div>
             <Textarea placeholder="Brief description..." value={description} onChange={(e) => setDescription(e.target.value)} rows={2}
-              className="bg-white border-border text-foreground placeholder:text-muted-foreground/50 text-sm" />
+              className="bg-white border-border text-foreground placeholder:text-muted-foreground/50 text-xs sm:text-sm focus:border-foreground/30 focus-visible:ring-0 leading-relaxed font-sans" />
           </div>
           <div>
             <div className="flex items-center justify-between mb-1.5">
-              <label className="text-xs font-medium text-foreground">Topics</label>
+              <label className="text-xs font-medium text-foreground font-mono uppercase tracking-wider text-[10px]">Topics</label>
               <button type="button" onClick={() => callGroqAI("tags")}
-                className="text-[11px] text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors">
+                className="text-[11px] text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors cursor-pointer font-mono">
                 <Sparkles className="h-3 w-3" /> Auto-generate
               </button>
             </div>
             <Input placeholder="e.g. Technology, AI" value={topic} onChange={(e) => setTopic(e.target.value)}
-              className="h-10 bg-white border-border text-foreground placeholder:text-muted-foreground/50" />
+              className="h-10 bg-white border-border text-foreground placeholder:text-muted-foreground/50 focus:border-foreground/30 focus-visible:ring-0 text-xs sm:text-sm font-mono" />
           </div>
         </div>
 
         {/* Editor */}
-        <div className="border border-border rounded-lg overflow-hidden">
+        <div className="border border-border rounded-lg overflow-hidden bg-white shadow-sm hover-premium-card">
           <div className="px-4 py-2.5 border-b border-border bg-secondary/30 flex items-center justify-between">
-            <span className="text-[11px] text-muted-foreground">Editor</span>
-            <span className="text-[11px] text-muted-foreground">Auto-save every 10s</span>
+            <span className="text-[10px] text-muted-foreground font-mono uppercase tracking-wider">Editor snapshot node</span>
+            <span className="text-[10px] text-muted-foreground font-mono uppercase tracking-wider">Auto-save every 10s</span>
           </div>
+
+          {/* Formatting Toolbar */}
+          {editor && (
+            <div className="flex flex-wrap items-center gap-1 p-2 bg-secondary/15 border-b border-border">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => editor.chain().focus().toggleBold().run()}
+                className={`h-7 w-7 p-0 cursor-pointer transition-colors ${editor.isActive("bold") ? "bg-white border border-border shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+                type="button"
+                title="Bold"
+              >
+                <Bold className="h-3.5 w-3.5" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => editor.chain().focus().toggleItalic().run()}
+                className={`h-7 w-7 p-0 cursor-pointer transition-colors ${editor.isActive("italic") ? "bg-white border border-border shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+                type="button"
+                title="Italic"
+              >
+                <Italic className="h-3.5 w-3.5" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => editor.chain().focus().toggleStrike().run()}
+                className={`h-7 w-7 p-0 cursor-pointer transition-colors ${editor.isActive("strike") ? "bg-white border border-border shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+                type="button"
+                title="Strikethrough"
+              >
+                <Strikethrough className="h-3.5 w-3.5" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => editor.chain().focus().toggleCode().run()}
+                className={`h-7 w-7 p-0 cursor-pointer transition-colors ${editor.isActive("code") ? "bg-white border border-border shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+                type="button"
+                title="Inline Code"
+              >
+                <Code className="h-3.5 w-3.5" />
+              </Button>
+              
+              <div className="h-4 w-px bg-border mx-1.5" />
+              
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+                className={`h-7 px-1.5 cursor-pointer text-xs font-mono font-bold transition-colors ${editor.isActive("heading", { level: 1 }) ? "bg-white border border-border shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+                type="button"
+                title="Heading 1"
+              >
+                H1
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+                className={`h-7 px-1.5 cursor-pointer text-xs font-mono font-bold transition-colors ${editor.isActive("heading", { level: 2 }) ? "bg-white border border-border shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+                type="button"
+                title="Heading 2"
+              >
+                H2
+              </Button>
+              
+              <div className="h-4 w-px bg-border mx-1.5" />
+              
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => editor.chain().focus().toggleBulletList().run()}
+                className={`h-7 w-7 p-0 cursor-pointer transition-colors ${editor.isActive("bulletList") ? "bg-white border border-border shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+                type="button"
+                title="Bullet List"
+              >
+                <List className="h-3.5 w-3.5" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => editor.chain().focus().toggleOrderedList().run()}
+                className={`h-7 w-7 p-0 cursor-pointer transition-colors ${editor.isActive("orderedList") ? "bg-white border border-border shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+                type="button"
+                title="Numbered List"
+              >
+                <ListOrdered className="h-3.5 w-3.5" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => editor.chain().focus().toggleBlockquote().run()}
+                className={`h-7 w-7 p-0 cursor-pointer transition-colors ${editor.isActive("blockquote") ? "bg-white border border-border shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+                type="button"
+                title="Blockquote"
+              >
+                <Quote className="h-3.5 w-3.5" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => editor.chain().focus().toggleCodeBlock().run()}
+                className={`h-7 w-7 p-0 cursor-pointer transition-colors ${editor.isActive("codeBlock") ? "bg-white border border-border shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+                type="button"
+                title="Code Block"
+              >
+                <Terminal className="h-3.5 w-3.5" />
+              </Button>
+            </div>
+          )}
+
           <div className="p-5 sm:p-6 min-h-[380px]">
-            <EditorContent editor={editor} />
+            <EditorContent editor={editor} className="outline-none" />
           </div>
         </div>
 
         {/* Actions */}
         <div className="flex gap-2">
-          <Button onClick={() => saveDraft(true)} disabled={saving || !title} variant="outline" className="text-sm gap-1.5 h-9">
+          <Button onClick={() => saveDraft(true)} disabled={saving || !title} variant="outline" className="text-xs gap-1.5 h-9 cursor-pointer transition-all duration-200 hover:translate-y-[-1px]">
             {saving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
             {saving ? "Saving..." : "Save draft"}
           </Button>
-          <Button onClick={handlePublish} disabled={publishing || !title} className="text-sm gap-1.5 h-9">
+          <Button onClick={handlePublish} disabled={publishing || !title} className="text-xs gap-1.5 h-9 btn-shimmer cursor-pointer transition-all duration-200 hover:translate-y-[-1px]">
             {publishing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5" />}
             {publishing ? "Publishing..." : "Publish"}
           </Button>

@@ -56,8 +56,8 @@ function EditorComponent() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      <header className="header-glass sticky top-0 z-10">
+    <div className="min-h-screen bg-white page-dots">
+      <header className="header-glass sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-5 sm:px-8 h-16 flex items-center justify-between gap-4">
           <Link href="/dashboard" className="flex-shrink-0">
             <Button variant="ghost" size="sm" className="gap-1.5 text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors px-2">
