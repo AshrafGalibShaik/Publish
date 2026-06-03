@@ -116,7 +116,7 @@ export function ContentEditor({ draft, content, onSave, onPublish }: ContentEdit
         { role: "user", content: `Generate an cover banner image prompt for: "${title}". Context: Write a high-end, clean, aesthetic cover banner illustration prompt.` }
       ];
 
-      const response = await puter.ai.chat(messages, { model: "gpt-4o-mini" });
+      const response = await puter.ai.chat(messages, { model: "gpt-4o-mini" }) as any;
       
       let promptText = "";
       if (typeof response === "string") {
@@ -179,7 +179,7 @@ export function ContentEditor({ draft, content, onSave, onPublish }: ContentEdit
         { role: "user", content: `Generate an image generation prompt for this article:\n\nTitle: ${title}\nContent: ${editorText.substring(0, 500)}` }
       ];
 
-      const response = await puter.ai.chat(messages, { model: "gpt-4o-mini" });
+      const response = await puter.ai.chat(messages, { model: "gpt-4o-mini" }) as any;
       
       let suggestion = "";
       if (typeof response === "string") {
@@ -341,7 +341,7 @@ export function ContentEditor({ draft, content, onSave, onPublish }: ContentEdit
         { role: "user", content: userPrompt }
       ];
 
-      const response = await puter.ai.chat(messages, { model: "gpt-4o-mini" });
+      const response = await puter.ai.chat(messages, { model: "gpt-4o-mini" }) as any;
       
       let result = "";
       if (typeof response === "string") {

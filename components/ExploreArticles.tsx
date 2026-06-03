@@ -134,7 +134,7 @@ export function ExploreArticles() {
         { role: "user", content: `Generate a description for this article content:\n\n${article.content_text}` }
       ];
 
-      const response = await puter.ai.chat(messages, { model: "gpt-4o-mini" });
+      const response = await puter.ai.chat(messages, { model: "gpt-4o-mini" }) as any;
       
       let suggestion = "";
       if (typeof response === "string") {
