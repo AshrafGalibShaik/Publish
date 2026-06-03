@@ -106,21 +106,39 @@ export function ContentEditor({ draft, content, onSave, onPublish }: ContentEdit
     }
     setGeneratingBanner(true);
     try {
+      const { puter } = await import("@heyputer/puter.js");
+      
       // 1. Generate visual banner prompt
-      const res = await fetch("/api/ai/suggest", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          prompt: title,
-          type: "image-prompt",
-          context: "Write a high-end, clean, aesthetic cover banner illustration prompt."
-        })
-      });
-      const data = await res.json();
-      const promptText = data.suggestion || `A beautiful, minimalist, high-end abstract banner illustration for: ${title}`;
+      const systemInstruction =
+        "You are an expert visual prompt engineer for AI image generation models. Given article title, generate a single vivid, descriptive prompt (1-2 sentences max) that would create a beautiful, relevant cover image for the article. Focus on aesthetic qualities, lighting, composition, and mood. Do NOT include any explanation — just the prompt itself, as plain text.";
+      const messages = [
+        { role: "system", content: systemInstruction },
+        { role: "user", content: `Generate an cover banner image prompt for: "${title}". Context: Write a high-end, clean, aesthetic cover banner illustration prompt.` }
+      ];
+
+      const response = await puter.ai.chat(messages, { model: "gpt-4o-mini" });
+      
+      let promptText = "";
+      if (typeof response === "string") {
+        promptText = response;
+      } else if (response && response.message) {
+        if (Array.isArray(response.message.content)) {
+          promptText = response.message.content[0]?.text || "";
+        } else {
+          promptText = response.message.content || "";
+        }
+      }
+
+      promptText = promptText.replace(/<think>[\s\S]*?<\/think>/gi, "").trim();
+      if (promptText.includes("```")) {
+        promptText = promptText.replace(/```[a-z]*\n?/gi, "").replace(/```$/g, "").trim();
+      }
+      
+      if (!promptText) {
+        promptText = `A beautiful, minimalist, high-end abstract banner illustration for: ${title}`;
+      }
 
       // 2. Call Puter client
-      const { puter } = await import("@heyputer/puter.js");
       const imgElement = await puter.ai.txt2img(promptText, {
         model: "black-forest-labs/flux-schnell"
       });
@@ -153,18 +171,34 @@ export function ContentEditor({ draft, content, onSave, onPublish }: ContentEdit
     }
     setImagePromptLoading(true);
     try {
-      const res = await fetch("/api/ai/suggest", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          prompt: editorText.substring(0, 500),
-          type: "image-prompt",
-          context: title
-        })
-      });
-      const data = await res.json();
-      if (data.suggestion) {
-        setImagePrompt(data.suggestion.replace(/^["']|["']$/g, '').trim());
+      const { puter } = await import("@heyputer/puter.js");
+      const systemInstruction =
+        "You are an expert visual prompt engineer for AI image generation models. Given article content, generate a single vivid, descriptive prompt (1-2 sentences max) that would create a beautiful, relevant cover image for the article. Focus on aesthetic qualities, lighting, composition, and mood. Do NOT include any explanation — just the prompt itself, as plain text.";
+      const messages = [
+        { role: "system", content: systemInstruction },
+        { role: "user", content: `Generate an image generation prompt for this article:\n\nTitle: ${title}\nContent: ${editorText.substring(0, 500)}` }
+      ];
+
+      const response = await puter.ai.chat(messages, { model: "gpt-4o-mini" });
+      
+      let suggestion = "";
+      if (typeof response === "string") {
+        suggestion = response;
+      } else if (response && response.message) {
+        if (Array.isArray(response.message.content)) {
+          suggestion = response.message.content[0]?.text || "";
+        } else {
+          suggestion = response.message.content || "";
+        }
+      }
+
+      suggestion = suggestion.replace(/<think>[\s\S]*?<\/think>/gi, "").trim();
+      if (suggestion.includes("```")) {
+        suggestion = suggestion.replace(/```[a-z]*\n?/gi, "").replace(/```$/g, "").trim();
+      }
+
+      if (suggestion) {
+        setImagePrompt(suggestion.replace(/^["']|["']$/g, '').trim());
         toast.success("Image prompt generated from article!");
       } else {
         toast.error("Failed to generate image prompt");
@@ -280,19 +314,57 @@ export function ContentEditor({ draft, content, onSave, onPublish }: ContentEdit
     setAiLoading(true);
     setAiResult("");
     try {
-      const response = await fetch("/api/ai/suggest", {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: promptToSend, type }),
-      });
-      if (!response.ok) throw new Error("AI request failed.");
-      const data = await response.json();
-      if (data.error) throw new Error(data.error);
-      const result = data.suggestion || "";
+      let systemInstruction = "You are a professional AI content writing assistant.";
+      let userPrompt = promptToSend;
+
+      if (type === "description") {
+        systemInstruction =
+          "You are an expert SEO and content editor. Write a concise, engaging 1-2 sentence description summarizing the provided article content. Keep it under 160 characters. Do NOT use any HTML or markdown formatting, just plain text.";
+        userPrompt = `Generate a description for this article content:\n\n${promptToSend}`;
+      } else if (type === "outline") {
+        systemInstruction =
+          "You are a professional content architect. Create a structured outline with key sections and bullet points for the provided topic. Return the outline ONLY as valid, semantic HTML elements (e.g. <h2> for headings, <p> for paragraphs, <ul> and <li> for list items). Do NOT wrap it in a markdown block, do NOT use triple backticks, and do NOT use raw markdown formatting like asterisks or hashtags. Wrap all content in clean, semantic HTML tags.";
+        userPrompt = `Create a detailed outline for an article about: "${promptToSend}"`;
+      } else if (type === "enhance") {
+        systemInstruction =
+          "You are a master editor. Enhance and improve the grammar, style, clarity, and flow of the provided text while keeping its core meaning intact. Return the enhanced content as valid HTML tags (like <p>, <strong>, etc.) so that it can be directly loaded into a rich text editor. Do NOT use markdown code fences, do NOT include triple backticks, and do NOT use markdown formatting characters.";
+        userPrompt = `Enhance the following text:\n\n${promptToSend}`;
+      } else if (type === "tags") {
+        systemInstruction =
+          "You are a content tagger. Generate 3-5 relevant, single-word topics or keywords (comma-separated, no bullet points) for the provided text. Do NOT use any markdown or HTML.";
+        userPrompt = `Generate 3-5 keywords for this content:\n\n${promptToSend}`;
+      }
+
+      const { puter } = await import("@heyputer/puter.js");
+      const messages = [
+        { role: "system", content: systemInstruction },
+        { role: "user", content: userPrompt }
+      ];
+
+      const response = await puter.ai.chat(messages, { model: "gpt-4o-mini" });
+      
+      let result = "";
+      if (typeof response === "string") {
+        result = response;
+      } else if (response && response.message) {
+        if (Array.isArray(response.message.content)) {
+          result = response.message.content[0]?.text || "";
+        } else {
+          result = response.message.content || "";
+        }
+      }
+
+      result = result.replace(/<think>[\s\S]*?<\/think>/gi, "").trim();
+      if (result.includes("```")) {
+        result = result.replace(/```[a-z]*\n?/gi, "").replace(/```$/g, "").trim();
+      }
+
       setAiResult(result);
       if (type === "description") { setDescription(result); toast.success("Description generated"); }
       else if (type === "tags") { setTopic(result); toast.success("Tags generated"); }
       else toast.success("Suggestion generated");
     } catch (error: any) {
+      console.error(error);
       toast.error(error?.message || "AI failed");
     } finally {
       setAiLoading(false);

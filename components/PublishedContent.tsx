@@ -117,6 +117,42 @@ export function PublishedContent({ slug }: PublishedContentProps) {
     setComments(comms);
   };
 
+  const callPuterAiReply = async (promptText: string, contextText: string): Promise<string> => {
+    try {
+      const { puter } = await import("@heyputer/puter.js");
+      const systemInstruction =
+        "You are an active, intelligent, and slightly witty community member on an AI-native forum. Analyze the provided post or comment context and write a thoughtful, conversational response. Keep it relatively brief, use clean line breaks for paragraph separation, and do NOT use any HTML tags. Offer real value or a unique angle.";
+      
+      const messages = [
+        { role: "system", content: systemInstruction },
+        { role: "user", content: `Post/Comment Context:\n${contextText}\n\nUser Question/Input:\n"${promptText}"\n\nGenerate your community response:` }
+      ];
+
+      const response = await puter.ai.chat(messages, { model: "gpt-4o-mini" });
+      
+      let suggestion = "";
+      if (typeof response === "string") {
+        suggestion = response;
+      } else if (response && response.message) {
+        if (Array.isArray(response.message.content)) {
+          suggestion = response.message.content[0]?.text || "";
+        } else {
+          suggestion = response.message.content || "";
+        }
+      }
+
+      suggestion = suggestion.replace(/<think>[\s\S]*?<\/think>/gi, "").trim();
+      if (suggestion.includes("```")) {
+        suggestion = suggestion.replace(/```[a-z]*\n?/gi, "").replace(/```$/g, "").trim();
+      }
+
+      return suggestion;
+    } catch (e) {
+      console.error("Error generating Puter AI reply:", e);
+      throw e;
+    }
+  };
+
   const handleSubmitComment = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!content || !newCommentText.trim()) return;
@@ -133,18 +169,9 @@ export function PublishedContent({ slug }: PublishedContentProps) {
       // 2. Trigger AI response if checked or @ai is mentioned
       if (askAi || commentText.toLowerCase().includes("@ai")) {
         const threadContext = `Post title: ${content.title}\nPost context: ${content.content_text}\nUser comment: ${commentText}`;
-        const res = await fetch("/api/ai/suggest", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            prompt: commentText,
-            type: "ai-reply",
-            context: threadContext
-          })
-        });
-        const data = await res.json();
-        if (data.suggestion) {
-          await addPostComment(content.id, data.suggestion, userComm.id, true, "Qwen 2.5 32B");
+        const suggestion = await callPuterAiReply(commentText, threadContext);
+        if (suggestion) {
+          await addPostComment(content.id, suggestion, userComm.id, true, "Puter GPT-4o-Mini");
           await loadComments();
         }
       }
@@ -166,18 +193,9 @@ export function PublishedContent({ slug }: PublishedContentProps) {
 
       if (shouldAskAi || text.toLowerCase().includes("@ai")) {
         const threadContext = `Post title: ${content.title}\nPost context: ${content.content_text}\nParent comment: ${text}`;
-        const res = await fetch("/api/ai/suggest", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            prompt: text,
-            type: "ai-reply",
-            context: threadContext
-          })
-        });
-        const data = await res.json();
-        if (data.suggestion) {
-          await addPostComment(content.id, data.suggestion, replyComm.id, true, "Qwen 2.5 32B");
+        const suggestion = await callPuterAiReply(text, threadContext);
+        if (suggestion) {
+          await addPostComment(content.id, suggestion, replyComm.id, true, "Puter GPT-4o-Mini");
           await loadComments();
         }
       }
@@ -203,18 +221,9 @@ export function PublishedContent({ slug }: PublishedContentProps) {
 
     try {
       const threadContext = `Post title: ${content.title}\nPost content: ${content.content_text}`;
-      const res = await fetch("/api/ai/suggest", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          prompt: prompt,
-          type: "ai-reply",
-          context: threadContext
-        })
-      });
-      const data = await res.json();
-      if (data.suggestion) {
-        await addPostComment(content.id, data.suggestion, null, true, "Qwen 2.5 32B");
+      const suggestion = await callPuterAiReply(prompt, threadContext);
+      if (suggestion) {
+        await addPostComment(content.id, suggestion, null, true, "Puter GPT-4o-Mini");
         await loadComments();
         toast.success("AI comment generated");
       }

@@ -126,21 +126,39 @@ export function ExploreArticles() {
 
     setLoadingSummaryId(article.id);
     try {
-      const res = await fetch("/api/ai/suggest", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          prompt: article.content_text,
-          type: "description"
-        })
-      });
-      const data = await res.json();
-      if (data.suggestion) {
-        setAiSummaries(prev => ({ ...prev, [article.id]: data.suggestion }));
+      const { puter } = await import("@heyputer/puter.js");
+      const systemInstruction =
+        "You are an expert SEO and content editor. Write a concise, engaging 1-2 sentence description summarizing the provided article content. Keep it under 160 characters. Do NOT use any HTML or markdown formatting, just plain text.";
+      const messages = [
+        { role: "system", content: systemInstruction },
+        { role: "user", content: `Generate a description for this article content:\n\n${article.content_text}` }
+      ];
+
+      const response = await puter.ai.chat(messages, { model: "gpt-4o-mini" });
+      
+      let suggestion = "";
+      if (typeof response === "string") {
+        suggestion = response;
+      } else if (response && response.message) {
+        if (Array.isArray(response.message.content)) {
+          suggestion = response.message.content[0]?.text || "";
+        } else {
+          suggestion = response.message.content || "";
+        }
+      }
+
+      suggestion = suggestion.replace(/<think>[\s\S]*?<\/think>/gi, "").trim();
+      if (suggestion.includes("```")) {
+        suggestion = suggestion.replace(/```[a-z]*\n?/gi, "").replace(/```$/g, "").trim();
+      }
+
+      if (suggestion) {
+        setAiSummaries(prev => ({ ...prev, [article.id]: suggestion }));
       } else {
         toast.error("Failed to generate AI summary");
       }
     } catch (err) {
+      console.error(err);
       toast.error("AI service error");
     } finally {
       setLoadingSummaryId(null);
