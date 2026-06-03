@@ -4,14 +4,15 @@ import { generateContentEmbedding } from "@/lib/embeddings";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await context.params;
     const supabaseAdmin = getSupabase();
     const { data, error } = await supabaseAdmin
       .from("content")
       .select("*")
-      .eq("id", params.id)
+      .eq("id", id)
       .single();
 
     if (error) throw error;
@@ -28,9 +29,10 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await context.params;
     const body = await request.json();
     const { title, content_html, content_text, description, topic, user_id } = body;
 
@@ -40,7 +42,7 @@ export async function PATCH(
     const { data: versions } = await supabaseAdmin
       .from("content_versions")
       .select("version_number")
-      .eq("content_id", params.id)
+      .eq("content_id", id)
       .order("version_number", { ascending: false })
       .limit(1);
 
@@ -49,7 +51,7 @@ export async function PATCH(
     // Create new version
     await supabaseAdmin.from("content_versions").insert([
       {
-        content_id: params.id,
+        content_id: id,
         version_number: nextVersion,
         title,
         content_html,
@@ -70,7 +72,7 @@ export async function PATCH(
         topic: topic !== undefined ? topic : undefined,
         updated_at: new Date().toISOString(),
       })
-      .eq("id", params.id)
+      .eq("id", id)
       .select()
       .single();
 
@@ -79,7 +81,7 @@ export async function PATCH(
     // Log the edit
     await supabaseAdmin.from("edit_logs").insert([
       {
-        content_id: params.id,
+        content_id: id,
         user_id,
         action: "updated",
         new_content: content_text,
@@ -89,7 +91,7 @@ export async function PATCH(
     // Generate vector embedding in background/parallel to keep patch flow fast
     if (title || description || content_text) {
       const fullText = `${title || data.title} ${description || data.description || ""} ${content_text || data.content_text}`;
-      generateContentEmbedding(params.id, fullText);
+      generateContentEmbedding(id, fullText);
     }
 
     return NextResponse.json({ content: data });
@@ -104,14 +106,15 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await context.params;
     const supabaseAdmin = getSupabase();
     const { error } = await supabaseAdmin
       .from("content")
       .delete()
-      .eq("id", params.id);
+      .eq("id", id);
 
     if (error) throw error;
 

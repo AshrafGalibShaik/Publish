@@ -128,7 +128,7 @@ export function PublishedContent({ slug }: PublishedContentProps) {
         { role: "user", content: `Post/Comment Context:\n${contextText}\n\nUser Question/Input:\n"${promptText}"\n\nGenerate your community response:` }
       ];
 
-      const response = await puter.ai.chat(messages, { model: "gpt-4o-mini" });
+      const response = await puter.ai.chat(messages, { model: "gpt-4o-mini" }) as any;
       
       let suggestion = "";
       if (typeof response === "string") {

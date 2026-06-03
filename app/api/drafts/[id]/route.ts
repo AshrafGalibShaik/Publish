@@ -3,14 +3,15 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await context.params;
     const supabaseAdmin = getSupabase();
     const { data, error } = await supabaseAdmin
       .from("drafts")
       .select("*")
-      .eq("id", params.id)
+      .eq("id", id)
       .single();
 
     if (error) throw error;
@@ -27,9 +28,10 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await context.params;
     const body = await request.json();
     const { title, content_html, content_text, topic } = body;
 
@@ -43,7 +45,7 @@ export async function PATCH(
         topic: topic !== undefined ? topic : undefined,
         last_saved_at: new Date().toISOString(),
       })
-      .eq("id", params.id)
+      .eq("id", id)
       .select()
       .single();
 
@@ -52,7 +54,7 @@ export async function PATCH(
     // Log the edit
     await supabaseAdmin.from("edit_logs").insert([
       {
-        draft_id: params.id,
+        draft_id: id,
         user_id: data.user_id,
         action: "draft_updated",
         new_content: content_text || "",
@@ -71,14 +73,15 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await context.params;
     const supabaseAdmin = getSupabase();
     const { error } = await supabaseAdmin
       .from("drafts")
       .delete()
-      .eq("id", params.id);
+      .eq("id", id);
 
     if (error) throw error;
 
